@@ -1,0 +1,33 @@
+\section{Related Work}
+
+Interacting with surrounding humans or objects is an important research problem in character animation. Much previous research focused on close range interaction, which involves many challenging problems, such as collisions handling \cite{Ye:2012}, spatial constraints solving \cite{Ho:2010:SRP}, and path planning \cite{Kallman:2003,Yamane:2004:SAH,Bai:2012:SCO}. These existing techniques generated interesting animations beyond what simple forward simulation or keyframe interpolation can achieve. However, most methods assumed that the character interacts with humans or objects made of rigid bodies. Ho and Kumar \shortcite{Ho:2009:CMS} introduced a technique to interact with deformable bodies using topology coordinates, in which the topological relationship of the character's body and the environment can be easily controlled.
+
+- Spatial Relationship Preserving Character Motion Adaptation
+Path planning
+- Synthesis of Concurrent Object Manipulation Tasks
+- Planning collision-free reaching motions for interactive object manipulation and grasping
+- Synthesizing animations of human manipulation tasks
+
+
+Hand manipulation with soft objects
+- Coupling Cloth and Rigid Bodies for Dexterous Manipulation
+ Robotic cloth manipulation
+
+Dexterous manipulation is a broad research area that has a vari- ety of applications in computer graphics and robotics. Although a precise definition is still open to interpretation, dexterous manipu- lation is typically defined as the use of multiple fingers to achieve a desired object configuration. In computer graphics, researchers have shown that intricate control strategies, such as finger gaiting [Ye and Liu 2012], rolling/sliding [Liu 2009; Bai and Liu 2014], or grasping/regrasping [Pollard and Zordan 2005; Kry and Pai 2006; Zhao et al. 2013; Wang et al. 2013], can be physically simulated on an anthropomorphic hand model. However, one of the most im- portant assumptions these techniques make is that the manipulated objects are rigid bodies with only six degrees of freedom.Manipulating deformable objects is a more challenging problem due to more degrees of freedom and more complex collision phenomena. Researchers in robotics have studied the problems of manipulat- ing fabric, cables, foam rubber, or sheet metal [Kosuge et al. 1995; Wu et al. 1995; Fahantidis et al. 1997; Osawa et al. 2007; Bersch et al. 2011; Miller et al. 2012]. Many previous approaches enhance control and planning algorithms by using simulation techniques to estimate the state of the deformable objects. For example, robotics researchers used a cloth simulator to approximate the contour of the clothes being folded by a PR2 robot [Cusumano-Towner et al. 2011]. Because the interaction between the robot hands and the cloth was relatively simple (i.e. grasping only), their simulation ap- plied position constraints to pin the cloth in the air instead of sim- ulating the hands. Our work aims to simulate the hands, the cloth, and their effects to each other realistically. We show that with a more accurate simulation routine, a wide variety of manipulation strategies can be achieved.
+
+
+Cloth control without hands
+- Manipulation of Flexible Objects by Geodesic Control
+- Harmonic Parameterization by Electrostatics
+Wojtan
+Jernej
+
+
+Papers that demonstrate dressing:
+- Character Motion Synthesis by Topology Coordinates: They generated keyframes in topology coordinates and interpolate motion. The character does not respond to the state of the clothes. No autonomous control. They demonstrated that a character stretching the arms out of a piece clothes wrapped around it using keyframes. 
+- Harmonic Parameterization by Electrostatics
+- Clothing manipulation, Igarashi
+
+
+Cloth sim interacting with rigids
+- Coupling Cloth and Rigid Bodies for Dexterous Manipulation
