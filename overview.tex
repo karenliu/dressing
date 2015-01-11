@@ -1,0 +1,18 @@
+\section{Overview}
+
+We have designed a system that allows a virtual human character to dress himself or assist another character to put on various types of garments. The
+goal of this system is to provide users a simple-to-use interface to design a dressing animation with a physically simulated garment.
+Given a piece of clothes and a reference human dressing motion that specifies the dressing style, our system allows a user to decompose the entire
+dressing process into multiple stages and specify high level actions for each stage. For example, dressing the first sleeve of a jacket can be achieved with
+the following four actions: \emph{Grip} the colar, \emph{align} the other hand with the opening of the sleeve,
+\emph{drag} the cloth from the wrist to the shoulder, and \emph{idle} until the cloth is settled.
+At each time step, our system simulates the dynamics of the clothes, determines the current stage of dressing and executes the corresponding low level controller
+to fulfill the user-specified action. While some of the actions, such as following the reference motion, can be achieved using simple feedforward controls,
+other actions require sophisticated path planning and feedback control. We apply RRT to plan motion paths that are free of inter-body collisions, and solve constrained
+optimization problems to move the end effectors into the desired location without knocking away or overstreching the clothes.
+Figure 2 illustrates the main components of our system. 
+
+
+
+
+
