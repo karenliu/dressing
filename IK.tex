@@ -1,0 +1,23 @@
+\section{Collision Free Inverse Kinematics}
+
+We control the human character kinemactically in the dressing simulation. The kinematic control relies heavily on solving inverse kinematics (IK). A common formulation of IK is to solve the following optimization problem.
+
+\begin{align}
+\label{eq:IK}
+  \min_{\vc{q}} & ||\vc{q} - \hat{\vc{q}}||_2^2 \\
+  \nonumber  \mathrm{subject\;} \mathrm{to} & \\
+  \label{eq:endEffectorConstraint}
+  &\vc{p}(\vc{q}) = \hat{\vc{p}}\\
+\nonumber   &\vc{q}_{l} \leq \vc{q} \leq \vc{q}_{h}
+\end{align}
+
+where $\vc{q}$ are the joint angles, $\hat{\vc{q}}$ is the reference pose, $\vc{p}(\vc{q})$ are the end effector positions, $\hat{\vc{p}}$ are the target positions, $\vc{q}_l$ and $\vc{q}_h$ are the joint limits.
+
+This optimization constrains the end effectors to be at the target locations and minimizes the pose deviation from the reference pose. However, this commonly used IK formulation does not prevent collisions between body parts. We find that with this formulation, collisions happen frequently during dressing because the end effectors need to navigate through a tight space between the body and the cloth. For this reason, we augment the optimization with an additional constraint to prevent interpenetrations between body parts. We approximate the collision volume of each body with multiple spheres and enforce no overlapping between pairs of spheres that belong to different body parts.
+
+\begin{equation}
+  ||\vc{c}_i(\vc{q}) - \vc{c}_j(\vc{q})||_2^2 - (r_1 + r_2)^2 \geq 0,\mbox{ if }B(i) \neq B(j)
+  \label{eq:collision}
+\end{equation}
+where $\vc{c}$ and $r$ are the center and radius of the sphere, and $B(i)$ is the body part that the sphere belongs to.
+

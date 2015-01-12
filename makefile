@@ -15,6 +15,8 @@ $(R).bbl: *.bib
 
 $(R).ps: *.tex $(STY)
 	latex $(R)
+	latex $(R)
+	latex $(R)
 	dvips -Ppdf -G0 -t letter $(R)
 
 $(R).pdf: $(R).ps

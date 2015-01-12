@@ -1,4 +1,7 @@
 \section{Garment}
 
-\paragraph{Physical Simulation.}
-\paragraph{Garment Features.}
+We use three different garments in our experiments, a jacket, a short and a robe(Figure~\ref{}). Each dress is modeled using multiple flat panels that are stiched together along the seams \cite{}.
+
+We represent the garments as a finite element mesh and simulate the dynamics with ArcSim \cite{}. The linear stretching and bending models with parameters derived from measurement \cite{} are used for the consitutuive models. The collisions are detected uisng a bounding volume hierachy \cite{} and resolved with non-rigid impact zones \cite{}.
+
+\paragraph{Garment Features.} We define a set of features on the cloth that are important in dressing. A feature is a set of cloth vertices. They are the target where the end effectors grasp or align during the dressing process. For example, we use the vertex loop of an armhole as a feature that the hand need to align with to put the arm into the sleeve. Figure~\ref{} shows all the garment features on a jacket.
