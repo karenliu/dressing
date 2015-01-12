@@ -1,0 +1,76 @@
+\section{Introduction}
+
+This paper describes a system for animating the activity of putting on
+clothing.  Dressing is one of the most common activities that each of us
+carries out each day.  Scenes of dressing are also common in live-action
+movies and television.  Some of these scenes are iconic, such as Mr.
+Rogers putting on his cardigan sweater in the children’s TV show,
+Spiderman pulling his mask over his head for the first time, or Mrs.
+Robinson slipping on her stockings in The Graduate.  Such dressing scenes
+are noticeably absent in computer animated films.  Despite the importance
+of dressing in our lives and in film, there is as yet no systematic
+approach to animating a human that is putting on clothing.
+
+% The trailer for The Incredibles shows how far a computer animator will
+% go to avoid showing a character pulling on their clothes.  
+
+The essence of animating the action of dressing is modeling the
+interaction between the human character and the cloth.  The human's motion
+must adapt to the cloth motion, otherwise problems occur such as the
+clothing slipping off or a hand getting stuck in a fold.  We often take
+for granted the complex set of motions that are needed to put on our
+clothes.  The seemingly simple act of putting on a jacket requires a
+careful coordination between the person and the jacket.  Unconsciously we
+make constant adjustments to our hand’s position when inserting it into
+the jacket’s sleeve.  We hold our body at an angle to keep a sleeve from
+sliding off our shoulder.  After putting on the first sleeve, we may use
+any of several strategies to get our hand behind our back and within reach
+of the second sleeve.  A system for animation of dressing must address
+these kinds of complexities.
+
+Our goal is to provide a system that will allow an animator to create
+motion for a human character that is dressing.  People use a wide variety
+of clothing types, including: shirts, pants, underwear, dresses, skirts,
+socks, shoes, hats, gloves, vests, jackets, and sweaters.  Most of these
+articles are made of cloth, so we use a cloth simulator to calculate the
+motion of the clothes.  We use the typical representation of a human
+character as a collection of rigid segments that are connected by joints.
+To guide the human figure's motion, we use optimization and path planning.
+
+We have found that a small set of \emph{typical actions} account for the vast
+majority of the motions that a person goes through to put on an article of
+clothing.  The approach that we take to dressing is to first have the
+animator divide a given dressing motion into a small number of such
+actions.  These actions include placing a hand or foot through an opening,
+pulling the clothing onto a limb, and re-orienting a limb after it has
+been positioned in the clothing.  Once this sequence of actions has been
+assembled, producing the dressing animation can proceed.  The system steps
+forward in time, updating the cloth's position through simulation.  The
+character's motion during each of the actions are guided by optimization
+and path planning in order to satisfy the the requirements of a given
+action.  The system adjusts the character's pose to match the end of one
+action to the start of the next.  Some portions of a dressing sequence do
+not require the character to react to the cloth, and such parts can follow
+motion capture data or keyframes.
+
+During a typical action, the system may be required to find a motion that
+avoids self-collisions between body parts.  This requires path planning,
+and we use the RRT algorithm to plan such motions.  In addition, in most
+actions the character's body must respect several constraints, including
+hard constraints such as joint angle limits and soft constraints such as
+following a planned path for a hand or a foot.  We make use of
+optimization to adhere to such constraints.  Some actions specifically
+require the character to react to the motion of the cloth.  Consider the
+case of trying to put a foot into the opening for one leg in a pair of
+pants.  Our system constantly adjusts the motion of the character's foot
+so that it draws closer to the opening without getting tangled in the
+cloth.  This is accomplished by following a vector field across the
+cloth's surface that acts as a guide for the foot.
+
+Using this action-based system, we have produced a variety of animations
+of a character that is putting on various types of clothes.  This includes
+putting on a jacket, pulling on pants while sitting, putting on pants
+while standing, and having one character assist another in putting on a
+robe.
+
+
