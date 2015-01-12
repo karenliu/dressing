@@ -11,7 +11,7 @@ We decompose the whole dressing sequence into multiple stages and speicify high 
     Grip(RH, $\vc{f}_{1}$) & Grip the colar feature $\vc{f_1}$  with the right hand.\\
     Track($\hat{\vc{q}}$, $T_1$) & Track the reference motion $\hat{\vc{q}}$ for $T_1$ seconds.\\
     Align(LH, $\vc{f}_{2}$) & Align the left hand with the left armhole $\vc{f}_2$.\\
-    Drag(RH, ${\vc\{p}_i\}$) & Drag the cloth from the wrist $\vc{p}_1$ to the elbow\\
+    Drag(RH, $\{\vc{p}_i\}$) & Drag the cloth from the wrist $\vc{p}_1$ to the elbow\\
     &                          $\vc{p}_2$ to the shoulder $\vc{p}_3$.\\
     Release(RH) & Release the cloth from the right hand.\\
     Idle($T_2$) & Idle for $T_2$ seconds.\\
@@ -48,22 +48,38 @@ E_{orientation} = 1-\frac{(\vc{p}_g-\vc{p}^n)^T}{||\vc{p}_g-\vc{p}^n||_2}\vc{d(q
 \end{displaymath}
 where $\vc{d(q)}$ is the direction from the center to the tip of the end effector.
 
-We also limit the joint speed within a threshold $\dot{\vc{q}}_{lim}$ to ensure the smoothness of the motion.
+We also limit the joint speed within a certain threshold to ensure the smoothness of the motion.
 \begin{displaymath}
--\dot{\vc{q}}_{lim} \leq \frac{\vc{q} - \vc{q}^n}{\Delta t} \leq \dot{\vc{q}}_{lim}
+(\frac{\vc{q} - \vc{q}^n}{\vc{q}_{max}-\vc{q}_{min}})^2 \leq \dot{\vc{q}}_{threshold}
 \end{displaymath}
-where $\vc{q}^n$ is the current pose.
+where $\vc{q}^n$ is the current pose and $\dot{\vc{q}}_{threshold}$ is the maximum allowed speed.
 
 The alignment action ends when the center of the end effector is within the feature loop and has passed through the plane that best fits the feature.
 
 \subsection{Traversal}
-After alignment, the end effector is halfway through the desired opening of the cloth. However, this configuration is not secure. The feature can easily fall out of control due to gravity or inappropriate end effector motion. For this reason, we design a traversal action before interpolating back to the reference motion.
+After alignment, the center of the end effector has passed the desired cloth feature. However, at this point, the feature can still easily fall out of control due to gravity or inappropriate end effector motions. We design a traversal action to secure the alignment, which enables the end effector pass throught the opening entirely and further into the cloth tubes. One example of traversal is stretching an arm into a sleeve. To accomplish this action, we first compute a series of desired poses of the end effector or the whole limb (next three paragraphs). We then solve the collision-free IK for their corresponding full body poses. We use these full body poses as keyframes. Although these keyframes are free of self-collision, directly interpolating them can lead to collisions between different body parts. For this reason, we apply bi-directional Rapidly Expanding Random Tree (RRT) \cite{} to find a collision free joint trajectory between adjacent keyframes. The character then follows this trajectory to accomplish the traversal action.
 
-The traversal action enable a limb to pass through the corresponding tube-shaped part of the cloth. For example, stretching an arm into a sleeve. We observed that in daily dressing activities, there are two types of traversal action. In the first type, one end effector assists another by \emph{dragging} the cloth along the limb to be dressed. One example is to lift the pants from the foot to the waist. In the second type, the limb \emph{stretches} streches to pass through the tube without assistance from other end effectors. This situation is commonly seen when dressing the second sleeve of a jacket from the back.
+We observed that in daily dressing activities, the traversal action can be categorized into two types. In the first type, the limb to be dressed remains still while another limb \emph{drags} the cloth along it. One example is to use hands to pull the pants up from the foot to the waist. In the second type, the limb \emph{stretches} itself to pass through the tubular part of the cloth without assistance from other limbs. This situation is commonly seen when dressing the second sleeve of a jacket. To accomodate both types of travesal, we deisgn different desired poses of the end effector or the limb.
 
-\paragraph{Dragging.} We design a dragging controller to handle the first case. Its input includes the assisting end effector and a set of path nodes $\{\vc{p}_1 ,..., \vc{p}_n\}$ that the cloth should be dragged through. In our system, we use the positions of the joints of the assisted limb as the path nodes. For example, if the character is using his left arm to help dressing the right arm. The path nodes are the positions of the right wrist, the right elbow and the right shoulder. For each of the path node $\vc{p}_i$, We set the target end effector location $\hat{\vc{p}}=\vc{p}_i$ in Equation~\ref{eq:endEffectorConstraint} and solve the collision-free IK for a full body pose. We compute $n$ poses from all the path nodes and use them as keyframes. Directly interpolating between the keyframes can cause collisions between different body parts. For this reason, we apply bi-directional Rapidly Expanding Random Tree (RRT) \cite{} to find a collision free joint trajectory between adjacent keyframes and follow this trajectory to drag the cloth through all the desired path nodes.
+\paragraph{Dragging.} In the first case, we specify the assisting end effector and a set of path nodes $\{\vc{p}_1 ,..., \vc{p}_n\}$ that the cloth should be dragged through. We use the positions of the joints of the assisted limb as the path nodes. For example, if the character is using his left hand to help dressing the right arm. The path nodes are the positions of the right wrist, the right elbow and the right shoulder (Figure \ref{}). For each of the path node $\vc{p}_i$, we set the target end effector location $\hat{\vc{p}}=\vc{p}_i$ in Equation~\ref{eq:IK} and solve the collision-free IK for a keyframe of full body pose. 
 
-\paragraph{Stretching.} The key of a successful stretching motion is to find the direction of stretching and the orientation of the end effector.
+\paragraph{Stretching.} In the second case of traversal, one limb straightens into the cloth tube without assistance from other end effectors. While the limb is stretching, a different body part need to keep the cloth from moving with the limb. We call these body parts \emph{fixture nodes}. For example, when stretching an arm into a sleeve as shown in Figure \ref{}, the fixture node is the opposite shoulder. We implement the fixture node as an addition constraint in the IK formulation.
+
+\begin{align}
+  \label{eq:fixtureNode}
+  \vc{R}(\vc{q})& = \vc{R}^n\\
+  \nonumber  \vc{t}(\vc{q})& = \vc{t}^n
+\end{align}
+where $\vc{}R^n$ and $\vc{t}^n$ are the current rotation and translation of the fixture node.
+
+A successful traversal relies on a correct stretching direction. We use the direction from the center of the fixture node to the current end effector location as the stretching direction. Along this direction, the friction force caused by the stretching limb is canceled by the cloth tension pulled from the fixture node. This prevents the cloth feature moving with end effector so that the limb can further pass through the feature. We add an objective term to Equation \ref{eq:IK} that encodes the desired stretching direction.
+\begin{equation}
+  E_{stretch} = 1 - \hat{\vc{d}}^T\vc{d(q)}
+  \label{eq:stretching}
+\end{equation}
+where $\hat{\vc{d}}$ is the desired stretching direction and $\vc{d(q)}$ is the direction from the root to the tip of the limb.
+
+We solve the collision-free IK with the additional objective (Equation~\ref{eq:stretching}) and constraint (Equation~\ref{eq:fixtureNode}), which gives us a key frame of full body pose for stretching.
 
 
 \subsection{Tracking}

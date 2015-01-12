@@ -4,14 +4,13 @@ We control the human character kinemactically in the dressing simulation. The ki
 
 \begin{align}
 \label{eq:IK}
-  \min_{\vc{q}} & ||\vc{q} - \hat{\vc{q}}||_2^2 \\
+  \min_{\vc{q}} & ||\vc{q} - \hat{\vc{q}}||_\vc{w}^2 \\
   \nonumber  \mathrm{subject\;} \mathrm{to} & \\
-  \label{eq:endEffectorConstraint}
-  &\vc{p}(\vc{q}) = \hat{\vc{p}}\\
-\nonumber   &\vc{q}_{l} \leq \vc{q} \leq \vc{q}_{h}
+  \nonumber  &\vc{p}(\vc{q}) = \hat{\vc{p}}\\
+\nonumber   &\vc{q}_{min} \leq \vc{q} \leq \vc{q}_{max}
 \end{align}
 
-where $\vc{q}$ are the joint angles, $\hat{\vc{q}}$ is the reference pose, $\vc{p}(\vc{q})$ are the end effector positions, $\hat{\vc{p}}$ are the target positions, $\vc{q}_l$ and $\vc{q}_h$ are the joint limits.
+where $\vc{q}$ are the joint angles, $\hat{\vc{q}}$ is the reference pose, $\vc{p}(\vc{q})$ are the end effector positions, $\hat{\vc{p}}$ are the target positions, $\vc{w}$ is a diagonal matrix that specifies the weight of each joint, $\vc{q}_{min}$ and $\vc{q}_{max}$ are the joint limits.
 
 This optimization constrains the end effectors to be at the target locations and minimizes the pose deviation from the reference pose. However, this commonly used IK formulation does not prevent collisions between body parts. We find that with this formulation, collisions happen frequently during dressing because the end effectors need to navigate through a tight space between the body and the cloth. For this reason, we augment the optimization with an additional constraint to prevent interpenetrations between body parts. We approximate the collision volume of each body with multiple spheres and enforce no overlapping between pairs of spheres that belong to different body parts.
 
