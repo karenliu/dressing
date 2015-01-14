@@ -1,104 +1,78 @@
 \section{Dressing Control}
 
-We decompose the whole dressing sequence into multiple stages and speicify high level actions for each stage. Table~\ref{Table:ActionQueue} exemplify the actions to dress the upper body of a character. The three core actions are aligning, traversal and tracking.
-
-\begin{table}
-  \centering
-  \begin{tabular}{|l|l|}
-    \hline
-    Action & Description \\
-    \hline
-    Grip(RH, $\vc{f}_{1}$) & Grip the colar feature $\vc{f_1}$  with the right hand.\\
-    Track($\hat{\vc{q}}$, $T_1$) & Track the reference motion $\hat{\vc{q}}$ for $T_1$ seconds.\\
-    Align(LH, $\vc{f}_{2}$) & Align the left hand with the left armhole $\vc{f}_2$.\\
-    Drag(RH, $\{\vc{p}_i\}$) & Drag the cloth from the wrist $\vc{p}_1$ to the elbow\\
-    &                          $\vc{p}_2$ to the shoulder $\vc{p}_3$.\\
-    Release(RH) & Release the cloth from the right hand.\\
-    Idle($T_2$) & Idle for $T_2$ seconds.\\
-    Track($\hat{\vc{q}}$, $T_3$) & Track the reference motion $\hat{\vc{q}}$ for $T_3$ seconds.\\
-    Align(RH, $\vc{f}_{3}$) & Align the right hand with the right armhole $\vc{f}_3$.\\
-    Stretch(RH) & Stretching the right hand into the right sleeve.\\
-    Track($\hat{\vc{q}}$, $T_4$) & Track the reference motion $\hat{\vc{q}}$ for $T_4$ seconds. \\
-    Idle($T_5$) & Idle for $T_5$ seconds until the cloth is settled.\\
-    \hline
-  \end{tabular}
-  \caption{An example action queue for dressing the upper body of a character with a jacket.}
-\end{table}
-
+Our system allows a user to decompose the whole dressing sequence into multiple segments and specify high level actions for each segment (Table \ref{table:actionQueue}). We designed a small set of actions that are tailored for dressing control. The most important actions are alignment, traversal and tracking. 
 
 \subsection{Alignment}
-The first important step to put on a cloth is to align one end effector with a cloth feature. For example, aligning a hand with an armhole, or a foot with the belt loop. In alignment, a feature is usually a loop of vertices. Alignment is challenging for two reasons. First, the target cloth feature is often folded and occluded by other parts of the cloth. It is not directly visable or reachable from the end effector location. Second, the alignment process is to chase a moving feature which has nonlinear dynamics and complex deformations. As the end effector approaches the feature, it will inevitably bumped into the nearby cloth, which could knock away the target.  To address these two challenges, we design a feedback controller for the alignment action.
+The first step to put on a cloth is to align one end effector with a cloth feature. For example, to align one hand with the armhole, or one foot with the belt loop. In alignment, we often choose a loop of vertices as the cloth feature and the goal is to control the end effector to pass through this loop. However, the target cloth feature is often folded and occluded by other parts of the cloth. It is not directly visable or reachable from the current end effector location. Furthermore, the alignment is a process of chasing a moving feature which has nonlinear dynamics and complex deformations. It is difficult to predict the movement of the feature and plan ahead. Even worse, as the end effector approaches the feature, it is highly likely that it will bump into the nearby cloth and knock the target away.  To address these challenges, we design a feedback controller for the alignment action.
 
-Our alignment controller proceeds the following two steps iteratively until the end effector is inside the garment feature. In the first step, our system finds an intermediate goal towards the target feature and in the second step, the end effector is moved a small distance towards this goal in a way that minimizes the chance to knock away the target feature.
+Our alignment controller first finds an intermediate goal towards the target feature, and then move the end effector a small distance towards this goal in a way that minimizes the chance to knock away the target feature. These two steps are performed iteratively until the end effector successfully reaches the feature.
 
-We set the intermediate goal as a vertex on the cloth which is visible from the end effector and it has the smallest geodesic distance to the target feature. However, since the cloth geometry is represented as a single-layer triangular mesh, a point outside the cloth surface has the same distance as a point at the same location but inside the surface. To prevent the end effector from approaching the feature from the wrong side, we duplicate the cloth mesh into two layers.  We precompute the geodesic distance on the cloth mesh using breadth first traversal starting from the feature vertices at the inner layer. At run time, we find the unoccluded vertex with the minimal geodesic distance using rasterization techniques. We place a camera at the end effector and render the geodesic distance on the  cloth mesh into a cubic environmental map. The direction towards the intermediate goal corresponds to the brightest pixel in the environmental map. Note that we choose to render all six directions of the cubic map, which not only allows the end effector to move forward, but also sideway and backtrack. We find that the ability to detect intermediate goal behind the end effector drastically increase the success rate of the alignment.
+We set the intermediate goal as a vertex on the cloth which is visible from the end effector and it has the smallest geodesic distance to the target feature (Figure \ref{fig:geodesic}). However, the cloth geometry is represented as a single-layer triangular mesh, which means no difference between a point at the outer and the inner surface of the cloth. Since the end effector needs to reach the target feature from inside the cloth, we duplicate the mesh into two layers. These two layers are connected at their boundary. We precompute the geodesic distance on the two-layer cloth mesh using breadth first traversal starting from the feature vertices at the inner layer. At runtime, we find the unoccluded vertex with the minimal geodesic distance using rasterization techniques. We place a camera at the end effector and render the geodesic distance on the cloth mesh into a cubic environmental map. The brightest pixel on the map corresponds the direction to the intermediate goal. Note that we choose to render all six directions of the cubic map, which not only allows the end effector to move forward, but also sideways and backtrack. We find that the ability to detect the intermediate goal behind the end effector drastically increases the success rate of the alignment.
 
-Given the intermediat goal $\vc{p}_g$ and the current end effector location $\vc{p}^n$, we first set the target end effector location $\hat{\vc{p}}$ at the next time step to be 
+Given the intermediat goal $\vc{p}_g$ and the current end effector location $\vc{p}^n$, we set the desired end effector location $\hat{\vc{p}}$ at the next time step to be 
 \begin{equation}
   \hat{\vc{p}} = \vc{p}^n+\alpha(\vc{p}_g - \vc{p}^n)
   \label{eq:target}
 \end{equation}
 where $\alpha$ is the step size that is specified by the user.
 
-In addition to the collision-free IK (Equation \ref{eq:IK} and \ref{eq:collision}) with target end effector location (Equation \ref{eq:target}), we include an addition objective and one more constraint.
+We found that in addition to the end effector location, its orientation also plays an important role in the alignment action. Since the end effector needs to navigate through a tight and winding space between folds of the cloth, its orientation should be aligned with the moving direction. This way of moving reduces the space swept by the end effector, lowers its chance to collide with nearby cloth and minimizes the normal impacts if collisions happen. For this reason, we add the following objective to the optimization (Equation~\ref{eq:IK}).
 
-The additional objective $E_{orientation}$ helps the end effector navigate through the tight and winding space between folds of the cloth with minimal normal impacts to the cloth. It aligns the orientation of the end effector with its moving direction.
 \begin{displaymath}
 E_{orientation} = 1-\frac{(\vc{p}_g-\vc{p}^n)^T}{||\vc{p}_g-\vc{p}^n||_2}\vc{d(q})
 \end{displaymath}
 where $\vc{d(q)}$ is the direction from the center to the tip of the end effector.
 
-We also limit the joint speed within a certain threshold to ensure the smoothness of the motion.
+In addition, we also limit the joint speed within a certain threshold to ensure the smoothness of the motion.
 \begin{displaymath}
-(\frac{\vc{q} - \vc{q}^n}{\vc{q}_{max}-\vc{q}_{min}})^2 \leq \dot{\vc{q}}_{threshold}
+-\dot{\vc{q}}_{thresh} \leq \frac{\vc{q} - \vc{q}^n}{\Delta t} \leq \dot{\vc{q}}_{thresh}
 \end{displaymath}
-where $\vc{q}^n$ is the current pose and $\dot{\vc{q}}_{threshold}$ is the maximum allowed speed.
+where $\vc{q}^n$ is the current pose, $\Delta t$ is the time step, and $\dot{\vc{q}}_{thresh}$ is the maximum allowed speed.
 
-The alignment action ends when the center of the end effector is within the feature loop and has passed through the plane that best fits the feature.
+To determine whether the alignment action has succeeded, we first find a plane that best fits the cloth feature.We then project the center of the end effector and the vertex loop of the feature onto this plane. If the center of the end effector has passed over this plane and the projected center is within the projected feature loop, the alignment has succeeded and we move on to the next action in the queue.
 
 \subsection{Traversal}
-After alignment, the center of the end effector has passed the desired cloth feature. However, at this point, the feature can still easily fall out of control due to gravity or inappropriate end effector motions. We design a traversal action to secure the alignment, which enables the end effector pass throught the opening entirely and further into the cloth tubes. One example of traversal is stretching an arm into a sleeve. To accomplish this action, we first compute a series of desired poses of the end effector or the whole limb (next three paragraphs). We then solve the collision-free IK for their corresponding full body poses. We use these full body poses as keyframes. Although these keyframes are free of self-collision, directly interpolating them can lead to collisions between different body parts. For this reason, we apply bi-directional Rapidly Expanding Random Tree (RRT) \cite{} to find a collision free joint trajectory between adjacent keyframes. The character then follows this trajectory to accomplish the traversal action.
+After alignment, the center of the end effector has passed the desired cloth feature. However, at this point, the feature can still easily fall out of control due to gravity or inappropriate end effector motions. We design a traversal action to secure the alignment, which enables the end effector to pass throught the opening entirely and further into the cloth tubes. Examples of traversal include stretching an arm into a sleeve and dragging the pants up to the waist. To accomplish this action, we first compute a series of desired poses of the end effector or the whole limb. We then solve the collision-free IK for their corresponding full body poses, which are used as keyframes of the entire traversal motion. Although these keyframes are free of self collision among body parts, directly interpolating them can lead to inter-body penetrations. For this reason, we apply bi-directional Rapidly Expanding Random Tree (RRT) \cite{} to find a collision free trajectory between adjacent keyframes.
 
-We observed that in daily dressing activities, the traversal action can be categorized into two types. In the first type, the limb to be dressed remains still while another limb \emph{drags} the cloth along it. One example is to use hands to pull the pants up from the foot to the waist. In the second type, the limb \emph{stretches} itself to pass through the tubular part of the cloth without assistance from other limbs. This situation is commonly seen when dressing the second sleeve of a jacket. To accomodate both types of travesal, we deisgn different desired poses of the end effector or the limb.
+We observed that in daily dressing activities, the traversal action can be categorized into two types. In the first type, the limb to be dressed remains relatively motionless while another limb \emph{drags} the cloth along it. For example, the character uses its hands to drag the pants up along the legs. In the second type, the limb \emph{stretches} itself to pass through the tubular part of the cloth without assistance from other limbs. This situation is often seen when putting on the second sleeve of a jacket. To accomodate both types of travesal, we designed different desired poses of the end effector or the limb.
 
-\paragraph{Dragging.} In the first case, we specify the assisting end effector and a set of path nodes $\{\vc{p}_1 ,..., \vc{p}_n\}$ that the cloth should be dragged through. We use the positions of the joints of the assisted limb as the path nodes. For example, if the character is using his left hand to help dressing the right arm. The path nodes are the positions of the right wrist, the right elbow and the right shoulder (Figure \ref{}). For each of the path node $\vc{p}_i$, we set the target end effector location $\hat{\vc{p}}=\vc{p}_i$ in Equation~\ref{eq:IK} and solve the collision-free IK for a keyframe of full body pose. 
+\paragraph{Dragging.} In the first case, a user can specify one end effector to drag the cloth and a set of body parts $\{B_1 ,..., B_n\}$ that the cloth should be dragged upon. We use the positions of the parent joints of those bodies as path nodes. For example, if the character is using his right hand to dress the left arm, the path nodes are the left wrist, the left elbow and the left shoulder (Figure \ref{}). For each of the path node $\vc{p}_i$, we set the target end effector location $\hat{\vc{p}}=\vc{p}_i$ in Equation~\ref{eq:IK}, and solve the collision-free IK for one keyframe of the dragging motion. 
 
-\paragraph{Stretching.} In the second case of traversal, one limb straightens into the cloth tube without assistance from other end effectors. While the limb is stretching, a different body part need to keep the cloth from moving with the limb. We call these body parts \emph{fixture nodes}. For example, when stretching an arm into a sleeve as shown in Figure \ref{}, the fixture node is the opposite shoulder. We implement the fixture node as an addition constraint in the IK formulation.
+\paragraph{Stretching.} In the second case of traversal, one limb straightens into the cloth tube without assistance from other end effectors. While the limb is stretching, another body part needs to keep the cloth from moving with the limb. We call this body part a \emph{fixture node}. For example, when stretching an arm into a sleeve as shown in Figure \ref{}, the fixture node is the opposite shoulder. We implemented the fixture node as an additional constraint in the optimization (Equation~\ref{eq:IK}).
 
 \begin{align}
   \label{eq:fixtureNode}
   \vc{R}(\vc{q})& = \vc{R}^n\\
   \nonumber  \vc{t}(\vc{q})& = \vc{t}^n
 \end{align}
-where $\vc{}R^n$ and $\vc{t}^n$ are the current rotation and translation of the fixture node.
+where $\vc{R}^n$ and $\vc{t}^n$ are the current rotation and translation of the fixture node.
 
-A successful traversal relies on a correct stretching direction. We use the direction from the center of the fixture node to the current end effector location as the stretching direction. Along this direction, the friction force caused by the stretching limb is canceled by the cloth tension pulled from the fixture node. This prevents the cloth feature moving with end effector so that the limb can further pass through the feature. We add an objective term to Equation \ref{eq:IK} that encodes the desired stretching direction.
+Besides the fixture node, a correct stretching direction is also critical to a successful stretching action. We used the direction from the center of the fixture node to the current end effector location as the stretching direction. Along this direction, the friction force caused by the stretching limb is canceled by the cloth tension pulled from the fixture node. This prevents the cloth feature from moving with the end effector so that the limb can further pass through the feature. We add an objective term to Equation \ref{eq:IK} to specify the desired stretching direction.
 \begin{equation}
   E_{stretch} = 1 - \hat{\vc{d}}^T\vc{d(q)}
   \label{eq:stretching}
 \end{equation}
 where $\hat{\vc{d}}$ is the desired stretching direction and $\vc{d(q)}$ is the direction from the root to the tip of the limb.
 
-We solve the collision-free IK with the additional objective (Equation~\ref{eq:stretching}) and constraint (Equation~\ref{eq:fixtureNode}), which gives us a key frame of full body pose for stretching.
+We solve the collision-free IK with the additional objective (Equation~\ref{eq:stretching}) and constraint (Equation~\ref{eq:fixtureNode}), which gives us a key frame of full body pose for the stretching motion.
 
 
 \subsection{Tracking}
 
-To preserve the dressing style specified by the user, We use the tracking action to follow the reference motion $\hat{\vc{q}}$. In most cases, it simply uses the next pose in the reference motion.
+To preserve the dressing style specified by the user, We use the tracking action to follow the reference motion $\hat{\vc{q}}(t)$. In most cases, it simply uses the next pose in the reference.
 \begin{displaymath}
 \vc{q} = \hat{\vc{q}}^{n+1}
 \end{displaymath}
-However, after alignment and traversal, the joint trajectory of the character could deviate a lot from the reference motion. Interpolation from the current pose to a pose in the reference motion is necessary to generate a smooth animation. To prevent collisions among different body parts during the interpolation, similar to the dragging controller, we apply RRT \cite{} to find a collision free path and then follow this path to the target pose.
+However, after alignment and traversal, the joint trajectory of the character could deviate far from the reference motion. Interpolation from the current pose to a pose in the reference is necessary for a smooth animation. To prevent inter-body collisions during the interpolation, similar to the dragging controller, we apply RRT \cite{} to find a collision free path and then follow this path to the target pose.
 
-
-\subsection{Miscs}
+\subsection{Other Actions}
 
 \paragraph{Grip and release.}
-The grip action models the grasping of a human's hand. It takes an end effector name and a cloth feature as parameters. This action establishes equality constraints between the set of vertices in the cloth feature to the coordinate frame of the end effector.
+The grip action models the grasping of the character's hand. The cloth feature moves together with the character's hand if it is gripped. This action constrains the vertices in the cloth feature to the local frame of the end effector.
 \begin{displaymath}
 \vc{p}_w = \vc{Rp} + \vc{t}
 \end{displaymath}
-where $\vc{p}_w$ is the world coordinate of a vertex in the cloth feature, $\vc{p}$ is the local coordinate of this vertex at the end effector's frame, $\vc{R}$ and $\vc{t}$ are the rotation and translation of the end effector. After being gripped, the cloth feature will move together with the character's hand. The release action simply removes the above constraints. The cloth feature will no long move with the end effector once it is released.
+where $\vc{p}_w$ is the world coordinate of a vertex in the cloth feature, $\vc{p}$ is the local coordinate of this vertex at the end effector's frame, $\vc{R}$ and $\vc{t}$ are the rotation and translation of the end effector. The release action simply removes the above constraints and the cloth feature no longer moves with the end effector once it is released.
 
-\paragraph{Idling.} The purpose of idling is to wait the clothes to settle before proceeding to the next dressing stage. During idling, the character keeps current pose for a period $T$ that is specified by the user.
+\paragraph{Idling.} Idling freezes the character's motion for a user-specified period $T$. The main purpose of this action is to wait the clothes to settle before proceeding to the next dressing action.
 
