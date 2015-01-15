@@ -13,9 +13,7 @@ $(R).bbl: *.bib
 	latex $(R).tex
 	latex $(R).tex
 
-$(R).ps: *.tex $(STY)
-	latex $(R)
-	latex $(R)
+$(R).ps: *.tex $(STY) $(FIG) $(R).bbl
 	latex $(R)
 	dvips -Ppdf -G0 -t letter $(R)
 

@@ -74,5 +74,5 @@ The grip action models the grasping of the character's hand. The cloth feature m
 \end{displaymath}
 where $\vc{p}_w$ is the world coordinate of a vertex in the cloth feature, $\vc{p}$ is the local coordinate of this vertex at the end effector's frame, $\vc{R}$ and $\vc{t}$ are the rotation and translation of the end effector. The release action simply removes the above constraints and the cloth feature no longer moves with the end effector once it is released.
 
-\paragraph{Idling.} Idling freezes the character's motion for a user-specified period $T$. The main purpose of this action is to wait the clothes to settle before proceeding to the next dressing action.
+\paragraph{Idling.} This action freezes the character's motion for a user-specified time period. The main purpose of this action is to wait the clothes to settle before proceeding to the next dressing action.
 
