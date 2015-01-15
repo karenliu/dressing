@@ -39,8 +39,11 @@ dressing sequence into a queue of high level actions. For example, putting an ar
 \emph{dragging} the cloth from the wrist to the shoulder. 
 Table~\ref{table:actionQueue} shows complete action queue for putting on a jacket.
 For each action, we design kinematic dressing controllers that determine desired end effector positions based on the current cloth states, solves IK problems for full body poses and plans a collision-free joint path to fulfill the action. 
-
-
-
+\karen{My understanding of the system is closer to the following
+  modification to Figure 1. Change ``action queue'' box to ``action planner.  Action
+  queue is the output data from action planner. The dressing
+  controller looks up this queue at every time step and decides which
+  controller to activate. The feedback arrow should go into dressing
+  controller, not action queue.}
 
 
