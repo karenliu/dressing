@@ -1,0 +1,52 @@
+\section{Results}
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{images/shortsSitting}
+  \caption{A character puts on a pair of shorts from a sitting pose.}
+  \label{fig:shorts1}
+\end{figure*}
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{images/shortsStanding}
+  \caption{A character puts on a pair of shorts from a standing pose.}
+  \label{fig:shorts2}
+\end{figure*}
+
+In this section we describe the results of our system. We chose four different types of garments from Berkeley Garment Library \cite{}  and put them on the character using different styles. Please watch the accompanying video for the dressing animations. Our system was implemented in C++. We used DART \cite{} for human character modeling and ARCSim \cite{} for cloth simulation. The examples were run on a desktop workstation with a x Hz CPU and x GB of memory. The parameters and performance data of our examples are summarized in Table \ref{table:data}. The complete action queue for each example can be found in the supplementary material.
+
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    examples & cloth & actions & sim & control  & total \\
+    & triangles &  & time & time & time \\
+    \hline
+    jacket &   &  &  &  &   \\
+    shorts & &  & & & \\
+    robe & & & & &   \\
+    vest & & & & &   \\
+    \hline
+  \end{tabular}
+  \caption{Parameters and performance of the examples. cloth triangles: the number of elements in cloth simulation. Actions: number of actions. Sim, control and total time are the average cloth simulation, dressing control and total time (in second) per frame.}
+  \label{table:data}
+\end{table}
+
+\paragraph{Jacket.} Figure~\ref{fig:jacket} shows that a character puts on a jacket with a common style: Put the right arm in a sleeve, swing the other arm to the back, find the hanging sleeve and stretch the left arm in. The reference human motion for this style is keyframed with x key frames. As shown in the video, dressing by directly playing back the reference motion without any feedback control fails to put on even the first sleeve. After gripping the collar of the cloth, our system first performs an alignment action. The character aligns his left hand with the corresponding arm hole. Once the alignment is successful, the traversal action is executed. The character uses his right hand to drag the cloth along the bodies of the left arm. At the end of traversal, the right hand reaches the should and releases the cloth. The character then swings his right arm to the back by tracking the reference motion. The second alignment phase begins when the character's right hand starts to search for the opening of the sleeve. This alignment phase is more challenging because the target armhole is completely occluded by multiple layers of cloth. The alignment action gradually finds better intermediate goals that are closer to the target feature and guides the hand to wiggle through the cloth folds towards the goal. We are glad to see that a natural fishing motion, an exploratory gesture that is often used by human to sort out the tangled cloth in dressing, emerges automatically from our alignment formulation. Furthermore, the hand operates within a tight space between the pelvis and the hanging cloth during alignment. Without the collision-free IK, the hand would pierce through the belly before aligning with the armhole. After the alignment, the character uses the traversal action to stretch the right arm into the sleeve and then track the reference motion until the jacket is completely on the body.
+
+\paragraph{Vest.}
+
+
+
+\paragraph{Shorts.} Figure~\ref{fig:shorts1} shows that the character sits on a stool and puts on the pair of shorts. We use a mocaped sequence as the reference motion in this example. The character grips the waistband and leans forward by tracking the reference motion. He first aligns his left foot with the waistband and then align it with the bottom of the shorts' left leg. Similarly, two alignment actions are executed for the right foot. Once both feet are aligned with the desired feature, the character stands up following the motion captured reference. For comparison, we also show in the accompanying video that neither of the legs are successfully put into the shorts if the character follows the reference without using the alignment action.
+
+We also tested the generality of our system by using a different reference motion, in which we mocapped a person putting on a pair of shorts from a standing pose. Despite the difference of the style, we was able to use the same action queue and successfully dressed the lower body of the character (Figure \ref{fig:shorts2}).
+
+\paragraph{Robe.}
+
+
+
+
+
+
