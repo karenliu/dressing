@@ -17,7 +17,7 @@ Given the intermediat goal $\vc{p}_g$ and the current end effector location $\vc
 \end{equation}
 where $\alpha$ is the step size that is specified by the user.
 
-We found that in addition to the end effector location, its orientation also plays an important role in the alignment action. Since the end effector needs to navigate through a tight and winding space between folds of the cloth, its orientation should be aligned with the moving direction. This way of moving reduces the space swept by the end effector, lowers its chance to collide with nearby cloth and minimizes the normal impacts if collisions happen. For this reason, we add the following objective to the optimization (Equation~\ref{eq:IK}).
+We found that in addition to the end effector location, its orientation also plays an important role in the alignment action. Since the end effector needs to navigate through a tight and winding space between folds of the cloth, its orientation should be aligned with the moving direction. This way of moving reduces the space swept by the end effector, lowers its chance to collide with nearby cloth and minimizes the normal impacts if collisions happen. For this reason, we add the following objective to the optimization (Equation~\ref{eq:IK}). \karen{What is the reference pose in Equation 1 used during alignment?}
 
 \begin{displaymath}
 E_{orientation} = 1-\frac{(\vc{p}_g-\vc{p}^n)^T}{||\vc{p}_g-\vc{p}^n||_2}\vc{d(q})
