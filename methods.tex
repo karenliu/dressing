@@ -1,36 +1,74 @@
 \section{Dressing Control}
 
-Our system allows a user to decompose the whole dressing sequence into multiple segments and specify high level actions for each segment (Table \ref{table:actionQueue}). We designed a small set of actions that are tailored for dressing control. The most important actions are alignment, traversal and tracking. 
+Our system allows a user to decompose the whole dressing sequence into multiple segments and specify high level actions for each segment (Table \ref{table:actionQueue}). We designed a small set of primitive actions that are tailored for dressing control. The most important actions are alignment, traversal and tracking. 
 
 \subsection{Alignment}
-The first step to put on a cloth is to align one end effector with a cloth feature. For example, to align one hand with the armhole, or one foot with the belt loop. In alignment, we often choose a loop of vertices as the cloth feature and the goal is to control the end effector to pass through this loop. However, the target cloth feature is often folded and occluded by other parts of the cloth. It is not directly visable or reachable from the current end effector location. Furthermore, the alignment is a process of chasing a moving feature which has nonlinear dynamics and complex deformations. It is difficult to predict the movement of the feature and plan ahead. Even worse, as the end effector approaches the feature, it is highly likely that it will bump into the nearby cloth and knock the target away.  To address these challenges, we design a feedback controller for the alignment action.
 
-\karen{Can we have an Algorithm (pseudo code) to summarize the following two paragraphs?}
-Our alignment controller first finds an intermediate goal towards the target feature, and then move the end effector a small distance towards this goal in a way that minimizes the chance to knock away the target feature. These two steps are performed iteratively until the end effector successfully reaches the feature.
 
-We set the intermediate goal as a vertex on the cloth which is visible from the end effector and it has the smallest geodesic distance to the target feature (Figure \ref{fig:geodesic}). However, the cloth geometry is represented as a single-layer triangular mesh, which means no difference between a point at the outer and the inner surface of the cloth. Since the end effector needs to reach the target feature from inside the cloth, we duplicate the mesh into two layers. These two layers are connected at their boundary. We precompute the geodesic distance on the two-layer cloth mesh using breadth first traversal starting from the feature vertices at the inner layer. At runtime, we find the unoccluded vertex with the minimal geodesic distance using rasterization techniques. We place a camera at the end effector and render the geodesic distance on the cloth mesh into a cubic environmental map. The brightest pixel on the map corresponds the direction to the intermediate goal. Note that we choose to render all six directions of the cubic map, which not only allows the end effector to move forward, but also sideways and backtrack. We find that the ability to detect the intermediate goal behind the end effector drastically increases the success rate of the alignment.
+The first step to put on a cloth is to align one body part, such as an end effector, with a cloth feature. For example, to align one hand with the armhole, or one foot with the belt loop. In alignment, we often choose a loop of vertices as the cloth feature and the goal is to control the end effector to pass through this loop. However, the target cloth feature is often folded and occluded by other parts of the cloth. It is not directly visable or reachable from the current end effector location. Furthermore, the alignment is a process of chasing a moving feature which has nonlinear dynamics and complex deformations. It is difficult to predict the movement of the feature and plan ahead. Even worse, as the end effector approaches the feature, it is highly likely that it will bump into the nearby cloth and knock the target away.  To address these challenges, we design a feedback controller for the alignment action.
 
-Given the intermediat goal $\vc{p}_g$ and the current end effector location $\vc{p}^n$, we set the desired end effector location $\hat{\vc{p}}$ at the next time step to be 
+Our alignment controller first finds an intermediate goal towards the target feature, and then move the end effector a small distance towards this goal in a way that minimizes the chance to knock away the target feature. These two steps are performed iteratively until the end effector successfully reaches the feature. Please refer to Algorithm~\ref{alg:alignment} for the pseudocode of alignment control.
+
+
+\begin{algorithm}[t]
+  Align(skel, body, cloth, $\hat{\vc{q}}$)\\
+  \Begin
+    {
+      \While{IsAligned(body, cloth.feature) $=$ False}
+            {
+              \tcc{Find the direction towards an intermediate goal.}
+              \vc{R, t} $\leftarrow$ body.GetTransformation()\;
+              camDirs[6] $\leftarrow$ \{$\pm\vc{R}$.Col(0), $\pm\vc{R}$.Col(1), $\pm\vc{R}$.Col(2)\}\;
+              cubicMap $\leftarrow$ \{\}\;
+              fov $\leftarrow$ $\pi / 2$\;
+              asp $\leftarrow$ 1\;
+              \ForEach{\vc{d} in camDir}
+              {
+                cam $\leftarrow$ SetCamera($\vc{t}$, $\vc{d}$, fov, asp)\;
+                img $\leftarrow$ cam.Render(cloth.Mesh)\;
+                cubicMap.Add(img)\;
+              }
+              imgIdx, u, v $\leftarrow$ cubicMap.BrightestPixel()\;
+              $\vc{d}\leftarrow$ ComputeWorldDirFromCubicMap(imgIdx, u, v)\;
+
+              \tcc{Move the end effector towards the intermediate goal.}
+              $\hat{\vc{p}} \leftarrow \vc{t} + \alpha \vc{d}$\;
+              opt $\leftarrow$ SetupIK($\hat{\vc{p}}$, $\hat{\vc{q}}$)        \tcp*{Equation \ref{eq:IK} and \ref{eq:collision}}
+              opt.obj.Add($E_{orientation}$) \tcp*{Equation \ref{eq:orientation}}
+              opt.con.Add($C_{speed}$) \tcp*{Equation \ref{eq:speed}}
+              $\vc{q} \leftarrow$ opt.Solve()\;
+
+              skel.SetPose($\vc{q}$)\;
+              cloth.Simulate()\;
+            }
+    }
+    \caption{Pseudocode of the alignment control.}
+    \label{alg:alignment}
+\end{algorithm}
+
+We set the intermediate goal as a vertex on the cloth which is visible from the end effector and it has the smallest geodesic distance to the target feature (Figure \ref{fig:geodesic}). However, the cloth geometry is represented as a single-layer triangular mesh, which means no difference between a point at the outer and the inner surface of the cloth. Since the end effector needs to reach the target feature from inside the cloth, we duplicate the mesh into two layers. These two layers are connected at their boundary. We precompute the geodesic distance on the two-layer cloth mesh using breadth first traversal starting from the feature vertices at the inner layer. At runtime, we find the unoccluded vertex with the minimal geodesic distance using rasterization techniques. We assigned the color of vertices on the cloth mesh as their geodesic distances. We place a camera at the end effector and render the cloth mesh into a cubic environmental map (line 4-12). The brightest pixel on the map corresponds the direction to the intermediate goal (line 13 and 14). Note that we chose to render all six directions of the cubic map, which not only allows the end effector to move forward, but also sideways and backtrack. Our experiments show that the ability to detect the intermediate goal behind the end effector drastically increases the success rate of the alignment.
+
+We augmented the collision-free IK formulation (Equation \ref{eq:IK} and \ref{eq:collision}) to move the end effector towards the intermediate goal. Given the direction to the goal $\vc{d}$ and the current end effector location $\vc{t}$, we set the desired end effector location $\hat{\vc{p}}$ at the next time step to be (line 15)
 \begin{equation}
-  \hat{\vc{p}} = \vc{p}^n+\alpha(\vc{p}_g - \vc{p}^n)
+  \hat{\vc{p}} = \vc{t}^n+\alpha\vc{d}
   \label{eq:target}
 \end{equation}
-where $\alpha$ is the step size that is specified by the user.
+where $\alpha$ is the step size that is specified by the user. We chose the initial character pose when the alignment starts as the reference $\hat{\vc{q}}$ throughout the whole alignment phase. In addition to the end effector location $\hat{\vc{p}}$, we found that its orientation also plays an important role in the alignment action. Since the end effector needs to navigate through a tight and winding space between folds of the cloth, its orientation should be aligned with the moving direction. This way of moving reduces the space swept by the end effector, lowers its chance to collide with nearby cloth and minimizes the normal impacts if collisions happen. For this reason, we add the following objective to the optimization (line 17).
 
-We found that in addition to the end effector location, its orientation also plays an important role in the alignment action. Since the end effector needs to navigate through a tight and winding space between folds of the cloth, its orientation should be aligned with the moving direction. This way of moving reduces the space swept by the end effector, lowers its chance to collide with nearby cloth and minimizes the normal impacts if collisions happen. For this reason, we add the following objective to the optimization (Equation~\ref{eq:IK}). \karen{What is the reference pose in Equation 1 used during alignment?}
-
-\begin{displaymath}
-E_{orientation} = 1-\frac{(\vc{p}_g-\vc{p}^n)^T}{||\vc{p}_g-\vc{p}^n||_2}\vc{d(q})
-\end{displaymath}
+\begin{equation}
+  E_{orientation} = 1-\vc{d}^T\vc{d(q})
+  \label{eq:orientation}
+\end{equation}
 where $\vc{d(q)}$ is the direction from the center to the tip of the end effector.
 
-In addition, we also limit the joint speed within a certain threshold to ensure the smoothness of the motion.
-\begin{displaymath}
--\dot{\vc{q}}_{thresh} \leq \frac{\vc{q} - \vc{q}^n}{\Delta t} \leq \dot{\vc{q}}_{thresh}
-\end{displaymath}
+In addition, we also limit the joint speed within a certain threshold to ensure the smoothness of the motion (line18).
+\begin{equation}
+  -\dot{\vc{q}}_{thresh} \leq \frac{\vc{q} - \vc{q}^n}{\Delta t} \leq \dot{\vc{q}}_{thresh}
+  \label{eq:speed}
+\end{equation}
 where $\vc{q}^n$ is the current pose, $\Delta t$ is the time step, and $\dot{\vc{q}}_{thresh}$ is the maximum allowed speed.
 
-To determine whether the alignment action has succeeded, we first find a plane that best fits the cloth feature.We then project the center of the end effector and the vertex loop of the feature onto this plane. If the center of the end effector has passed over this plane and the projected center is within the projected feature loop, the alignment has succeeded and we move on to the next action in the queue.
+To determine whether the alignment action has succeeded (line 3), we first find a plane that best fits the cloth feature. We then project the center of the end effector and the vertex loop of the feature onto this plane. If the center of the end effector has passed over this plane and the projected center is within the projected feature loop, the alignment has succeeded and we move on to the next action in the queue.
 
 \subsection{Traversal}
 After alignment, the center of the end effector has passed the desired cloth feature. However, at this point, the feature can still easily fall out of control due to gravity or inappropriate end effector motions. We design a traversal action to secure the alignment, which enables the end effector to pass throught the opening entirely and further into the cloth tubes. Examples of traversal include stretching an arm into a sleeve and dragging the pants up to the waist. To accomplish this action, we first compute a series of desired poses of the end effector or the whole limb. We then solve the collision-free IK for their corresponding full body poses, which are used as keyframes of the entire traversal motion. Although these keyframes are free of self collision among body parts, directly interpolating them can lead to inter-body penetrations. For this reason, we apply bi-directional Rapidly Expanding Random Tree (RRT) \cite{} to find a collision free trajectory between adjacent keyframes.
