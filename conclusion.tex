@@ -1,30 +1,30 @@
 \section{Conclusion}
 
 We have presented a system that allows an animator to create motions
-of humans that are dressing.  By providing reference motion and an
+of people that are dressing.  By providing reference motion and an
 action sequence, an animator has a fine degree of control over the
 method and the style that a character uses to put on a garment.  We
 have demonstrated the use of our method in creating a variety of
 dressing animations, including putting on a jacket, a vest, pants
-while sitting, pants while standing, and being helped to put on a
+while sitting, pants while standing, and assistance in putting on a
 robe.  They key technical aspects of our system are collision-free
-inverse kinematics, limb path planning, and end effector motion
-using visibility feedback from the cloth.
+inverse kinematics, path planning for limbs, and end effector path
+planning using visibility feedback from the cloth.
 
 There are several avenues for future work on animated dressing.  One
-possibility is to incorporate dexterous manipulation of the cloth
-(e.g. hand gripping a sleeve) with our current system.  Such an
-augmented system would allow a hand to properly grip a sleeve, instead
-of ``gluing'' the hand to a portion of the cloth as we currently do.
-Another important aspect of dexterous manipulation that we have not
-explored is the use of hands in fastening the garments, such as using
-buttons, zippers and laces.  As suggested in the Limitations section,
-we might desire a system that would be able to figure out a high
-level dressing strategy for a newly presented garment.  Such a system
-would likely need to do some form of search across possible dressing
-strategies.  There are several aspects of cloth simulation that could
-lead to higher quality dressing animation.  Current cloth simulators
-do not handle multiple layers of cloth well, such as putting on a
-jacket over a shirt.
-
+possibility is to incorporate dexterous manipulation of the cloth with our
+current system.  Such an augmented system would allow a hand to properly
+grip a sleeve, instead of ``gluing'' the hand to a portion of the cloth as
+we currently do.  Another important aspect of dexterous manipulation that
+we have not explored is the use of hands in fastening the garments, as is
+needed to use buttons, zippers and laces.  As suggested in the Limitations
+section, we might want a system that can figure out a high level dressing
+strategy for a newly presented garment.  Such a system would likely need
+to do some form of search across a variety of possible dressing
+strategies.  There are potential improvements to cloth simulation that
+could lead to higher quality dressing animation.  Current cloth simulators
+do not handle multiple layers of cloth well, such as putting on a jacket
+over a shirt.  The ability to handle tight contact between cloth and
+the human figure would also increase the range of possible dressing
+simulations.
 
