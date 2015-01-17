@@ -1,0 +1,27 @@
+\section{Limitations}
+
+Even though our system has produced a number of successful dressing
+animations, our current approach has some limitations.  One such
+limitation is due to the nature of the feedback from the cloth position.
+In our system, this feedback is performed using visibility calculations.
+When the control system is guiding a hand to enter a sleeve, this is done
+by finding the closest point on the cloth to the sleeve entry that is
+visible to the tip of the hand.  When real people dress themselves, we
+speculate that much of the feedback based on the cloth position is due to
+tactile feedback, instead of using visual information.
+
+Another limitation of our dressing controller is that it uses kinematic
+motion instead of calculating the dynamics of the human body.  This means
+that the simulated human has no notion of balance, and thus may carry out
+physically impossible motions.  This is especially important in dressing
+tasks such as putting on a pair of pants while standing up.  The lack of
+balance control could also have more subtle effects on the stance of the
+person during upper body dressing.
+
+A final limitation of our system is that it requires the user to specify
+the set of actions for a given dressing task.  When given a new garment,
+the system has no way of determining a sequence of actions that will
+successfully place it on a body.  We can imagine a more sophisticated
+system that would analyze a garment and form a plan of actions to put on
+the piece of clothing.  
+
