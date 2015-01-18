@@ -18,18 +18,19 @@ In this section we describe the results of our system. We chose four different t
 
 \begin{table}
   \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
+  \begin{tabular}{|l|c|c|c|c|c|}
     \hline
-    examples & cloth & actions & sim & control  & total \\
-    & triangles &  & time & time & time \\
+    examples 		& cloth 	& actions 	& dressing 	& sim 		& control \\
+    				& triangles & 			& time 		& time 		& time \\
     \hline
-    jacket &   &  &  &  &   \\
-    shorts & &  & & & \\
-    robe & & & & &   \\
-    vest & & & & &   \\
+    jacket 			& 23160  	& 10		& 18.185 	& 150208.1	&     \\
+    shorts (sit) 	& 14900 	& 10		& 16.05 	& 31297.5 	&  \\
+    shorts (stand)	& 14900 	& 10		& 14.905	& 28319.5	&  \\
+    vest 			& 6570 		& 14		& 12.7		& 13970		&    \\
+    robe 			& 31738 	& 11		& 			& 			&    \\
     \hline
   \end{tabular}
-  \caption{Parameters and performance of the examples. cloth triangles: the number of elements in cloth simulation. Actions: number of actions. Sim, control and total time are the average cloth simulation, dressing control and total time (in second) per frame.}
+  \caption{Parameters and performance of the examples. cloth triangles: the number of elements in cloth simulation. Actions: number of actions. Dressing time: wall clock time (in seconds) of dressing motion. Sim and control times are the total times (in seconds) for the cloth simulation and our control functions respectively.}
   \label{table:data}
 \end{table}
 
