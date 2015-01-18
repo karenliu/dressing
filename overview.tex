@@ -37,12 +37,11 @@ components: primitive action editor, dressing controller and cloth
 simulation. The input to our system includes a piece of garment, a
 character and a reference dressing motion approximating the desired
 dressing style. The reference motion can be a motion captured sequence
-or a sparse set of keyframes. Our system allows a user to use the
-action editor to decompose the entire dressing sequence into a queue
-of high level actions \karen{What's the relation between this sequence
+or a sparse set of keyframes. Our system allows a user to use the primitive
+action editor to assemble a queue of actions to describe the reference
+motion. \karen{What's the relation between this sequence
   of actions and the reference motion? We might want to clarify that
-  here.}. We call these actions \emph{primitive actions}, which we
-designed specifically for dressing \karen{We also want to stress that
-  a primitive action is a parameterizable building block.}\jie{Greg suggests that primitive action and high level action have opposite meanings.} For example, putting an arm into a sleeve can be described as first \emph{aligning} the hand with the armhole and then \emph{dragging} the cloth from the wrist to the shoulder. Table~\ref{table:actionQueue} shows a complete action queue for putting on a jacket. At each step, our system fetches an action from the action queue, executes its corresponding dressing controllers and simulates the physics of the cloth. Figure \ref{fig:overview} illustrates the main components of our system. 
+  here. We also want to stress that
+  a primitive action is a parameterizable building block.} For example, putting an arm into a sleeve can be described as first \emph{aligning} the hand with the armhole and then \emph{dragging} the cloth from the wrist to the shoulder. These primitive actions are parameterizable building blocks for creating the dressing animation. Table~\ref{table:actionQueue} shows a complete action queue for putting on a jacket. At each step, our system fetches an action from the action queue, executes its corresponding dressing controllers and simulates the physics of the cloth. Figure \ref{fig:overview} illustrates the main components of our system. 
 
 

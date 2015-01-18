@@ -1,9 +1,8 @@
 \section{Dressing Control}
 
-Our system allows a user to decompose the whole dressing sequence into multiple segments and specify high level actions for each segment (Table \ref{table:actionQueue}). We designed a small set of primitive actions that are tailored for dressing control. The most important actions are alignment, traversal and tracking.
+We have designed a small set of primitive actions to control a character to put on a variety of garments using different styles. The two most important actions are alignment and traversal. We found that while the feedback of the cloth state is crucial in alignment, feedback plays a less important role in other actions. For this reason, we monitor the cloth state and solve an optimization based on it at each time step only during the alignment phase. For other actions, we plan the entire path at the beginning of each action, which does not take the cloth state into consideration.
 
 \subsection{Alignment}
-
 
 The first step to put on a cloth is to align one body part, such as an end effector, with a cloth feature. For example, to align one hand with the armhole, or one foot with the belt loop. In alignment, we often choose a loop of vertices as the cloth feature and the goal is to control the end effector to pass through this loop. However, the target cloth feature is often folded and occluded by other parts of the cloth. It is not directly visable or reachable from the current end effector location. Furthermore, the alignment is a process of chasing a moving feature which has nonlinear dynamics and complex deformations. It is difficult to predict the movement of the feature and plan ahead. Even worse, as the end effector approaches the feature, it is highly likely that it will bump into the nearby cloth and knock the target away.  To address these challenges, we design a feedback controller for the alignment action.
 
@@ -46,16 +45,32 @@ Our alignment controller first finds an intermediate goal towards the target fea
     \label{alg:alignment}
 \end{algorithm}
 }
+
 We set the intermediate goal as a point on the cloth which is visible from the end effector and it has the smallest geodesic distance to the target feature (Figure \ref{fig:geodesic}). In our implementation, we find this point using rasterization techniques. We assigned the color of vertices on the cloth mesh as their geodesic distances. We place a camera at the end effector and render the cloth mesh into a cubic environmental map. The brightest pixel on the map corresponds the direction to the intermediate goal. Note that we chose to render all six directions of the cubic map, which not only allows the end effector to move forward, but also sideways and backtrack. Our experiments show that the ability to detect the intermediate goal behind the end effector drastically increases the success rate of the alignment.
 
 However, the cloth geometry is represented as a single-layer triangular mesh, which means that there is no difference between a point at the outer and the inner surface of the cloth. Since the end effector needs to reach the target feature from inside the cloth, we duplicate the mesh into two layers. These two layers are connected at their boundary. We precompute the geodesic distance on the two-layer cloth mesh using breadth first traversal starting from the feature vertices at the inner layer.
 
-To move the end effector towards the intermediate goal, we augmented the collision-free IK formulation (Equation \ref{eq:IK} and \ref{eq:collision}). Given the direction to the goal $\vc{d}$ and the current end effector location $\vc{p}$, we set the desired end effector location $\hat{\vc{p}}$ at the next time step to be
+To move the end effector towards the intermediate goal, we formulated an optimization that computes collision-free inverse kinematics. This IK moves the character's end effectors to the desired locations, keeps the full body motion similar to the reference and guarantees that the body parts do not overlap with each other.
+
+\begin{align}
+\label{eq:IK}
+  \min_{\vc{q}} & ||\vc{q} - \hat{\vc{q}}||_\vc{w}^2 \\
+  \nonumber  \mathrm{subject\;} \mathrm{to} & \\
+  \nonumber  &\vc{p}(\vc{q}) = \hat{\vc{p}}\\
+  \nonumber   &\vc{q}_{min} \leq \vc{q} \leq \vc{q}_{max}\\
+  \nonumber   &||\vc{c}_i(\vc{q}) - \vc{c}_j(\vc{q})||_2^2 - (r_1 + r_2)^2 \geq 0
+\end{align}
+
+where $\vc{q}$ are the joint angles, $\hat{\vc{q}}$ is the reference pose, $\vc{w}$ is a diagonal matrix that specifies the weight of each joint, $\vc{p}(\vc{q})$ are the end effector positions, $\hat{\vc{p}}$ are the target positions, $\vc{q}_{min}$ and $\vc{q}_{max}$ are the joint limits. The last constraint prevents inter-body penetrations. We approximate the collision volume of each body with multiple spheres and enforce no penetration for each pair of spheres that belong to different bodies. $\vc{c}_i$ and $r_i$ in the constraint are the center and radius of the $i$th sphere.
+
+Given the direction to the goal $\vc{d}$ and the current end effector location $\vc{p}$, we set the desired end effector position $\hat{\vc{p}}$ at the next time step to be
 \begin{equation}
   \hat{\vc{p}} = \vc{p}^n+\alpha\vc{d}
   \label{eq:target}
 \end{equation}
-where $\alpha$ is the step size that is specified by the user. \karen{What is the reference pose for alignment?} We chose the initial character pose when the alignment starts as the reference $\hat{\vc{q}}$ throughout the whole alignment phase. In addition, we found that the orientation of the end effector also plays an important role in the alignment action. Since the end effector needs to navigate through a tight and winding space between folds of the cloth, its orientation should be aligned with the moving direction. This way of moving reduces the space swept by the end effector, lowers its chance to collide with nearby cloth and minimizes the normal impacts if collisions happen. For this reason, we add the following objective to the optimization.
+where $\alpha$ is the user-specified step size. \karen{What is the reference pose for alignment?} We chose the initial character pose when the alignment starts as the reference $\hat{\vc{q}}$ throughout the whole alignment phase.
+
+In addition to the above IK formulation, we found that the orientation of the end effector also plays an important role in the alignment action. Since the end effector needs to navigate through a tight and winding space between folds of the cloth, its orientation should be aligned with the moving direction. This way of moving reduces the space swept by the end effector, lowers its chance to collide with nearby cloth and minimizes the normal impacts if collisions happen. For this reason, we add the following objective to the optimization.
 
 \begin{equation}
   E_{orientation} = 1-\vc{d}^T\vc{r(q})
@@ -63,7 +78,7 @@ where $\alpha$ is the step size that is specified by the user. \karen{What is th
 \end{equation}
 where $\vc{r(q)}$ is the direction from the center to the tip of the end effector.
 
-In addition, we also limit the joint speed within a certain threshold to ensure the smoothness of the motion.
+We also limit the joint speed within a certain threshold to ensure the smoothness of the motion.
 \begin{equation}
   -\dot{\vc{q}}_{max} \leq \frac{\vc{q} - \vc{q}^n}{\Delta t} \leq \dot{\vc{q}}_{max}
   \label{eq:speed}
@@ -73,13 +88,30 @@ where $\vc{q}^n$ is the current pose, $\Delta t$ is the time step, and $\dot{\vc
 To determine whether the alignment action has succeeded, we first find a plane that best fits the cloth feature. We then project the center of the end effector and the vertex loop of the feature onto this plane. If the center of the end effector has passed over this plane and the projected center is within the projected feature loop, the alignment has succeeded and we move on to the next action in the queue.
 
 \subsection{Traversal}
-After alignment, the center of the end effector has passed the desired cloth feature. However, at this point, the feature can still easily fall out of control due to gravity or inappropriate end effector motions. We design a traversal action to secure the alignment, which enables the end effector to pass throught the opening entirely and further into the cloth tubes. Examples of traversal include stretching an arm into a sleeve and dragging the pants up to the waist. We found that unlike alignment, feedback does not play an important role in traversal. We chose to use feed-forward control and planed the joint trajectory for the entire action at the beginning of traversal. We first compute a series of desired poses of the end effector or the whole limb. We then solve the collision-free IK for their corresponding full body poses, which are used as keyframes of the entire traversal motion. Although these keyframes are free of self collision among body parts, directly interpolating them can lead to inter-body penetrations. For this reason, we apply bi-directional Rapidly Expanding Random Tree (RRT) \cite{} to find a collision free trajectory between adjacent keyframes. RRT is a stochastic search method that finds collision-free paths in a given configuration space. In our case, the configuration is the set of joint positions for a limb.
+After alignment, the center of the end effector has passed the desired cloth feature. However, at this point, the feature can still easily fall out of control due to gravity or inappropriate end effector motions. We design a traversal action to secure the alignment, which enables the end effector to pass throught the opening entirely and further into the cloth tubes. Examples of traversal include stretching an arm into a sleeve and dragging the pants up to the waist. We found that unlike alignment, feedback does not play an important role in traversal. We chose to use feed-forward control and planed the joint trajectory for the entire action at the beginning of traversal. We first compute a series of desired poses of the end effector or the whole limb. We then solve the collision-free IK (Equation~\ref{eq:IK}) for their corresponding full body poses, which are used as keyframes of the entire traversal motion. Although these keyframes are free of self collision among body parts, directly interpolating them can lead to inter-body penetrations. For this reason, we apply bi-directional Rapidly Expanding Random Tree (RRT) \cite{} to find a collision free trajectory between adjacent keyframes. RRT is a stochastic search method that finds collision-free paths in a given configuration space. In our case, the configuration is the set of joint positions for a limb.
 
-We observed that in daily dressing activities, the traversal action can be categorized into two types. In the first type, the limb to be dressed remains relatively motionless while another limb \emph{drags} the cloth along it. For example, the character uses its hands to drag the pants up along the legs. In the second type, the limb \emph{stretches} itself to pass through the tubular part of the cloth without assistance from other limbs. This situation is often seen when putting on the second sleeve of a jacket. To accomodate both types of travesal, we designed different desired poses of the end effector or the limb.
+We observed that in daily dressing activities, the traversal action can be categorized into two types. In the first type, the limb to be dressed remains relatively motionless while another limb \emph{drags} the cloth along it. For example, the character uses its hands to drag the pants up along the legs. In the second type, the limb \emph{stretches} itself to pass through the tubular part of the cloth without assistance from other limbs. This situation is often seen when putting on the second sleeve of a jacket. To accomodate both types of traversal, we designed different desired poses of the end effector or the limb.
 
-\paragraph{Dragging.} In the first case, a user can specify one end effector to drag the cloth and a set of body parts $\{B_1 ,..., B_n\}$ that the cloth should be dragged upon. We use the positions of the parent joints of those bodies as path nodes. For example, if the character is using his right hand to dress the left arm, the path nodes are the left wrist, the left elbow and the left shoulder (Figure \ref{}). For each of the path node $\vc{p}_i$, we set the target end effector location $\hat{\vc{p}}=\vc{p}_i$ in Equation~\ref{eq:IK}, and solve the collision-free IK for one keyframe of the dragging motion. 
 
-\paragraph{Stretching.} In the second case of traversal, one limb straightens into the cloth tube without assistance from other end effectors. While the limb is stretching, another body part needs to keep the cloth from moving with the limb. We call this body part a \emph{fixture node}. For example, when stretching an arm into a sleeve as shown in Figure \ref{}, the fixture node is the opposite shoulder. If the shoulder is not fixed, the IK could compute a pose in which the shoulder moves with the stretching arm and so is the sleeve hanging on the shoulder. This would eliminate the required relative movement between the arm and sleeve for the stretching action. We implemented the fixture node as an additional constraint in the optimization (Equation~\ref{eq:IK}).
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{images/vest}
+  \caption{A character puts on a vest by swinging it around his neck.}
+  \label{fig:vest}
+\end{figure*}
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{images/shortsSitting}
+  \caption{A character puts on a pair of shorts in a sitting pose.}
+  \label{fig:shorts1}
+\end{figure*}
+
+
+
+\paragraph{Dragging.} In the first case, a user can specify one end effector to drag the cloth and a set of body parts $\{B_1 ,..., B_n\}$ that the cloth should be dragged upon. We use the positions of the parent joints of those bodies as path nodes. For example, if the character is using his right hand to dress the left arm, the path nodes are the left wrist, the left elbow and the left shoulder. For each of the path node $\vc{p}_i$, we set the target end effector location $\hat{\vc{p}}=\vc{p}_i$ in Equation~\ref{eq:IK}, and solve the collision-free IK for one keyframe of the dragging motion. 
+
+\paragraph{Stretching.} In the second case of traversal, one limb straightens into the cloth tube without assistance from other end effectors. While the limb is stretching, another body part needs to keep the cloth from moving with the limb. We call this body part a \emph{fixture node}. For example, when stretching an arm into a sleeve as shown in the third column of Figure \ref{fig:jacket}, the fixture node is the opposite shoulder. If the shoulder is not fixed, the IK could compute a pose in which the shoulder moves with the stretching arm and so is the sleeve hanging on the shoulder. This would eliminate the required relative movement between the arm and sleeve for the stretching action. We implemented the fixture node as an additional constraint in the optimization (Equation~\ref{eq:IK}).
 
 \begin{align}
   \label{eq:fixtureNode}
@@ -95,18 +127,16 @@ Besides the fixture node, a correct stretching direction is also critical. We us
 \end{equation}
 where $\vc{d}_{stretch}$ is the desired stretching direction and $\vc{r_i(q)}$ is the longest principal axis of the $i$th body of the limb.
 
-We solve the collision-free IK with the stretching direction objective (Equation~\ref{eq:stretching}) and the fixture node constraint (Equation~\ref{eq:fixtureNode}), which gives us the key frame at the end of the stretching motion.
+We solve the collision-free IK (Equation~\ref{eq:IK}) with the stretching direction objective (Equation~\ref{eq:stretching}) and the fixture node constraint (Equation~\ref{eq:fixtureNode}), which gives us the key frame at the end of the stretching motion (the fourth column of Figure~\ref{fig:jacket}).
 
+\subsection{Other Actions}
 
-\subsection{Tracking}
-
-To preserve the dressing style specified by the user, We use the tracking action to follow the reference motion $\hat{\vc{q}}(t)$. In most cases, it simply uses the next pose in the reference.
+\paragraph{Tracking.} To preserve the dressing style specified by the user, we use the tracking action to follow the reference motion $\hat{\vc{q}}(t)$. In most cases, it simply uses the next pose in the reference.
 \begin{displaymath}
 \vc{q} = \hat{\vc{q}}^{n+1}
 \end{displaymath}
 However, after alignment and traversal, the joint trajectory of the character could deviate far from the reference motion. Interpolation from the current pose to a pose in the reference is necessary for a smooth animation. To prevent inter-body collisions during the interpolation, similar to the traversal action, we applied RRT for a collision free path and then follow this path to the target pose.
 
-\subsection{Other Actions}
 
 \paragraph{Grip and release.}
 The grip action models the grasping of the character's hand. The cloth feature moves together with the character's hand if it is gripped. This action constrains the vertices in the cloth feature to the local frame of the end effector.
