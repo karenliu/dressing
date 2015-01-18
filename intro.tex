@@ -32,20 +32,25 @@ systematic approach to animating a human that is putting on clothing.
 Our goal is to provide a system that will allow an animator to create
 motion for a human character that is dressing.  We want the animator
 to have a high degree of control over the look of the final animation.
-To this end, we desire a system that gives control over the actions that
+To this end, we desire a system that \karen{allows the user to
+  describe the sequence of high-level actions for dressing.}gives control over the actions that
 the character takes to put on an article of clothing.  Also, we would
-like our system to accept both keyframe and motion capture input as
+like our system to accept \karen{approximated human motion, in either
+  the form of  keyframes or motion capture, as reference for the final animation.}both keyframe and motion capture input as
 reference motion for the animation.  Thus the input from the animator
 for a given dressing sequence consists of: a character model, a garment,
 a set of dressing actions for the character, and reference motions for
 the character.  
 
+\karen{I wish there is a fact or a quote we can use here to state how
+  prevalent cloth simulation is in moveis and games and it is pretty
+  much the only way to generate realistic cloth?}
 Our system takes these inputs from the animator and creates a physically
 realistic looking animation.  In order to create animation that is
 physically plausible, we made the choice to use physical simulation of
 cloth to guide the garment motions.  By using cloth simulation, the motion
 of the character affects the cloth motion in a natural manner.  We
-representate our human figures as a collection of rigid segments that are
+represent our human figures as a collection of rigid segments that are
 connected by joints.
 
 % People use a wide variety
@@ -66,7 +71,7 @@ any of several strategies to get our hand behind our back and within reach
 of the second sleeve.  A system for animation of dressing must address
 these kinds of complexities.
 
-We have found that a small set of \emph{typical actions} account for the vast
+We have found that a small set of \emph{primitive actions} account for the vast
 majority of the motions that a person goes through to put on an article of
 clothing.  The approach that we take to dressing is to first have the
 animator divide a given dressing motion into a small number of such
@@ -82,6 +87,17 @@ action to the start of the next.  Some portions of a dressing sequence do
 not require the character to react to the cloth, and such parts can follow
 the provided keyframe or motion capture data.
 
+\karen{ To a large degree, the problem that a dressing animation
+  system must solve is a form of \emph{path planning}.  However, the
+  dressing problem has a few unique challenges which are not addressed
+  by standard path planning algorithms. First, the character's body
+  parts must move in coordination to achieve the task while preventing
+  self-intersection. Moreover, the character must move in and around
+  the cloth in such a way that the garment ends up properly on the
+  person. Unlike typical path planning that avoids collisions, contact
+  between the body parts and the cloth is to be expected. In fact,
+  \emph{utilizing} contact to expand the opening of a sleeve or fixate a part
+  of cloth on the body is very crucial for successful dressing.}
 To a large degree, the problem that a dressing animation system must solve
 is a form of \emph{path planning}.  First, the character's motion must not
 cause self-intersection between body parts.  We use several techniques
