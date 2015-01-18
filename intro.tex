@@ -35,21 +35,24 @@ have a high degree of control over the look of the final animation.  To
 this end, we desire a system that allows the user to describe the sequence
 of high-level actions for dressing.  Also, we would like our system to
 accept approximated human motion, in either the form of  keyframes or
-motion capture, as reference for the final animation.  Thus the input from
+motion capture, as reference for styles or aesthetics.  Thus the input from
 the animator for a given dressing sequence consists of: a character model,
 a garment, a set of dressing actions for the character, and reference
-motions for the character.  
-
-\karen{I wish there is a fact or a quote we can use here to state how
-  prevalent cloth simulation is in moveis and games and it is pretty
-  much the only way to generate realistic cloth?}
-Our system takes these inputs from the animator and creates a physically
-realistic looking animation.  In order to create animation that is
+motions for the character. In order to create animation that is
 physically plausible, we made the choice to use physical simulation of
-cloth to guide the garment motions.  By using cloth simulation, the motion
-of the character affects the cloth motion in a natural manner.  We
-represent our human figures as a collection of rigid segments that are
-connected by joints.
+cloth to guide the garment motions. By using cloth simulation, the
+human figure, made of a collection of rigid segments, can interact
+with the cloth in a natural manner.
+\karen{I combined the paragraph about cloth simulator with the
+  previous paragraph.}
+ 
+% Our system takes these inputs from the animator and creates a physically
+% realistic looking animation.  In order to create animation that is
+% physically plausible, we made the choice to use physical simulation of
+% cloth to guide the garment motions.  By using cloth simulation, the motion
+% of the character affects the cloth motion in a natural manner.  We
+% represent our human figures as a collection of rigid segments that are
+% connected by joints.
 
 % People use a wide variety
 % of clothing types, including: shirts, pants, underwear, dresses, skirts,
