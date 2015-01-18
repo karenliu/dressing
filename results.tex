@@ -14,7 +14,7 @@
   \label{fig:shorts2}
 \end{figure*}
 
-In this section we describe the results of our system. We chose four different types of garments from Berkeley Garment Library \cite{}  and put them on the character using different styles. Please watch the accompanying video for the dressing animations. Our system was implemented in C++. We used DART \cite{} for human character modeling and ARCSim \cite{} for cloth simulation. The examples were run on a desktop workstation with a x Hz CPU and x GB of memory. The parameters and performance data of our examples are summarized in Table \ref{table:data}. The complete action queue for each example can be found in the supplementary material.
+In this section we describe the results of our system. We chose four different types of garments from Berkeley Garment Library \cite{}  and put them on the character using different styles. Please watch the accompanying video for the dressing animations. Our system was implemented in C++. We used DART \cite{} for human character modeling and ARCSim \cite{} for cloth simulation. The examples were run on a desktop workstation with a 3.7 GHz, 4 core CPU and 8 GB of memory. The parameters and performance data of our examples are summarized in Table \ref{table:data}. The complete action queue for each example can be found in the supplementary material.
 
 \begin{table}
   \centering
@@ -23,11 +23,11 @@ In this section we describe the results of our system. We chose four different t
     examples 		& cloth 	& act- 	& anim	& sim 		& control \\
                         & triangles & 	ions	& time 	& time 		& time \\
     \hline
-    jacket 		& 23.2k  	& 10		& 18s 	& 42h42m	&     \\
-    shorts (sit) 	& 14.9k 	& 10		& 16s 	&  8h41m 	&  \\
-    shorts (stand)	& 14.9k 	& 10		& 15s	&  7h52m	&  \\
-    vest 		& 6.57k		& 14		& 13s	&  3h53m	&    \\
-    robe 		& 31.7k 	& 11		& 			& 			&    \\
+    jacket 		& 23.2k  	& 10		& 18s 	&30h23m	&  14m  \\
+    shorts (sit) 	& 14.9k 	& 10		& 16s 	&  8h41m 	& 4m \\
+    shorts (stand)	& 14.9k 	& 10		& 15s	&  7h52m	& 3m \\
+    vest 		& 6.57k		& 14		& 13s	&  3h53m	& 1m   \\
+    robe 		& 31.7k 	& 11		& 14s			& 20h40m		& 19m  \\
     \hline
   \end{tabular}
   \caption{Parameters and performance of the examples. cloth triangles: the number of elements in cloth simulation. Actions: number of actions. Anim time: wall clock time (in seconds) of the dressing animation. Sim and control times are the total times for the cloth simulation and our control functions respectively.}
