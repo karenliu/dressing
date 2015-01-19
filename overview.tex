@@ -1,5 +1,8 @@
 \section{Overview}
 
+\karen{We mixed the present tense with past tense throughout the
+  entire paper. Can someone fix this?}
+
 \begin{figure}
   \centering
   \includegraphics[width=3.3in]{images/overview}
@@ -38,7 +41,7 @@ simulation. The input to our system includes a piece of garment, a
 character and a reference dressing motion approximating the desired
 dressing style. The reference motion can be a motion captured sequence
 or a sparse set of keyframes. The user first assembles a
-sequence of actions to describe the reference motion using our
+queue of actions to describe the reference motion using our
 primitive action editor. For example, putting an arm into a sleeve can be described as first \emph{aligning} the hand with the armhole and then \emph{dragging} the cloth from the wrist to the shoulder. These primitive actions are parameterizable building blocks for creating various dressing animation. Table~\ref{table:actionQueue} shows a complete action queue for putting on a jacket. At each step, our system fetches an action from the action queue, executes its corresponding dressing controllers and simulates the physics of the cloth. Figure \ref{fig:overview} illustrates the main components of our system. 
 
 
