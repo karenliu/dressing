@@ -1,6 +1,7 @@
 \section{Garment}
 
 We chose four different garments from Berkeley Garment Library, including a jacket, a short, a robe and a vest. We made necessary edits to these garment models to fit the size of our character.
+\alex{Only the vest is unedited, we edited the rest of the Berkeley garments significantly for appearance and variation(jacket and robe have the same base model. The shorts are cutoff pants).}
 The garments are modeled as a finite element mesh and physically simulated using ARCSim cloth simulator \cite{Narain:2012:AAR}. We use linear stretching and bending models and constitutive models derived from measurements \cite{Wang:2011}. The collisions are detected uisng a bounding volume hierachy \cite{Tang:2010} and resolved with non-rigid impact zones \cite{Harmon:2008}.
 
 \paragraph{Garment Features.} We defined a set of cloth features that are used in dressing control. A feature is a set vertices on the cloth mesh. They are the target where the end effectors grasp or align with during the dressing process. For example, we use the vertex loop of an armhole as a feature that the hand need to align with to put the arm into the sleeve. Figure~\ref{fig:feature} shows all the features that we use for the jacket and the shorts.
