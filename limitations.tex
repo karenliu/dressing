@@ -18,6 +18,12 @@ tasks such as putting on a pair of pants while standing up.  The lack of
 balance control could also have more subtle effects on the stance of the
 person during upper body dressing.
 
+In all of our examples, the initial configuration of the cloth has been
+set in a way that is favorable to dressing.  If the initial garment were
+tangled, our dressing actions would most likely fail.  A possible avenue
+for addressing this may be found in the robotics research that has
+investigated picking up and folding cloth~\cite{Cusumano:2011:BCD}.
+
 A final limitation of our system is that it requires the user to specify
 the set of actions for a given dressing task.  When given a new garment,
 the system has no way of determining a sequence of actions that will
@@ -25,7 +31,7 @@ successfully place it on a body.  We can imagine a more sophisticated
 system that would analyze an entirely new garment and form a plan of
 actions to put on the piece of clothing.  
 
-\karen{Perhaps we can add a paragraph about initial state of
-  cloth. Currently, we start the simulation with the cloth in
-  hand. Roboticists have been trying to fold laundry from random
-  initial cloth configurations.}
+% \karen{Perhaps we can add a paragraph about initial state of
+%   cloth. Currently, we start the simulation with the cloth in
+%   hand. Roboticists have been trying to fold laundry from random
+%   initial cloth configurations.}
