@@ -32,20 +32,17 @@ systematic approach to animating a human that is putting on clothing.
 Our goal is to provide a system that will allow an animator to create
 motion for a human character that is dressing.  We want the animator to
 have a high degree of control over the look of the final animation.  To
-this end, we desire a system that allows the user to describe the sequence
-of high-level actions for dressing.  Also, we would like our system to
-accept approximated human motion, in either the form of  keyframes or
+this end, we desire a system that allows the user to describe the dressing scene as a sequence
+of high-level actions.  Also, we would like our system to
+accept approximated human motion, in either the form of keyframes or
 motion capture, as reference for styles or aesthetics.  Thus the input from
-the animator for a given dressing sequence consists of: a character model,
-a garment, a set of dressing actions for the character, and reference
+the animator for a given dressing scene consists of: a character model,
+a garment, a sequence of dressing actions, and reference
 motions for the character. In order to create animation that is
 physically plausible, we made the choice to use physical simulation of
 cloth to guide the garment motions. By using cloth simulation, the
 human figure, made of a collection of rigid segments, can interact
 with the cloth in a natural manner.
-\karen{I combined the paragraph about cloth simulator with the
-  previous paragraph.}
-  \alex{In this paragraph we mention the user intputing actions before we describe our intuitive step of assembling the scene out of primitive actions. }
  
 % Our system takes these inputs from the animator and creates a physically
 % realistic looking animation.  In order to create animation that is
@@ -59,9 +56,9 @@ with the cloth in a natural manner.
 % of clothing types, including: shirts, pants, underwear, dresses, skirts,
 % socks, shoes, hats, gloves, vests, jackets, and sweaters.
 
-The essence of animating the action of dressing is modeling the
+The essence of animating the act of dressing is modeling the
 interaction between the human character and the cloth.  The human's motion
-must adapt to the cloth motion, otherwise problems occur such as the
+must adapt to the motion of the cloth, otherwise problems occur such as the
 clothing slipping off or a hand getting stuck in a fold.  We often take
 for granted the complex set of motions that are needed to put on our
 clothes.  The seemingly simple act of putting on a jacket requires a
@@ -76,9 +73,7 @@ these kinds of complexities.
 We have found that a small set of \emph{primitive actions} account for the vast
 majority of the motions that a person goes through to put on an article of
 clothing.  The approach that we take to dressing is to first have the
-animator divide a 
-%given
-\alex{desired} dressing motion into a small number of such
+animator divide a desired dressing motion into a small number of such
 actions.  These actions include placing a hand or foot through an opening,
 pulling the garment onto a limb, and stretching out a limb after it has
 been positioned in the clothing.  Once this sequence of actions has been
@@ -86,16 +81,16 @@ assembled, producing the dressing animation can proceed.  The system steps
 forward in time, updating the cloth's position through simulation.  The
 character's motion during each of the actions are guided by optimization
 and planning in order to satisfy the requirements of a given
-action.  The system adjusts the character's pose to match the end of one
-action to the start of the next.  Some portions of a dressing sequence do
-not require the character to react to the cloth, and such parts can follow
+action. The system adjusts the character's pose to match the end of one
+action to the start of the next. Some portions of a dressing sequence do
+not require the character to react to the cloth, and such segments can follow
 the provided keyframe or motion capture data.
 
 To a large degree, the problem that a dressing animation system must solve
 is a form of \emph{path planning}.  However, the dressing problem has a
 few unique challenges which are not addressed by standard path planning
 algorithms. First, the character's body parts must move in coordination to
-achieve the task while preventing self-intersection. Moreover, the
+complete the task while preventing self-intersection. Moreover, the
 character must move in and around the cloth in such a way that the garment
 ends up properly on the person. Unlike typical path planning that avoids
 collisions, contact between the body parts and the cloth is to be

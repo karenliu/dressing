@@ -1,8 +1,5 @@
 \section{Overview}
 
-\karen{We mixed the present tense with past tense throughout the
-  entire paper. Can someone fix this?}
-
 \begin{figure}
   \centering
   \includegraphics[width=3.3in]{images/overview}
@@ -16,17 +13,17 @@
     \hline
     Action & Description \\
     \hline
-    Grip(RH, $\vc{f}_{1}$) & Grip the colar feature $\vc{f}_1$  with the right hand.\\
+    Grip(RH, $\vc{f}_{1}$) & Grip the collar feature $\vc{f}_1$  with the right hand.\\
     Track($\hat{\vc{q}}(t)$, $T_1$) & Track the reference motion $\hat{\vc{q}}$ for $T_1$ seconds.\\
     Align(LH, $\vc{f}_{2}$) & Align the left hand with the armhole $\vc{f}_2$.\\
     Drag(RH, $\{B_i\}$) & Drag the cloth along the left hand $B_1$, the left\\
     &                      arm $B_2$ and the left shoulder $B_3$.\\
     Release(RH) & Release the cloth from the right hand.\\
-    Idle($T_2$) & Idle for $T_2$ seconds.\\
-    Track($\hat{\vc{q}}$(t), $T_3$) & Track the reference motion $\hat{\vc{q}}$ for $T_3$ seconds.\\
+    Track($\hat{\vc{q}}$(t), $T_2$) & Track the reference motion $\hat{\vc{q}}$ for $T_2$ seconds.\\
     Align(RH, $\vc{f}_{3}$) & Align the right hand with the right armhole $\vc{f}_3$.\\
     Stretch(RH) & Stretching the right hand into the sleeve.\\
-    Track($\hat{\vc{q}}$(t), $T_4$) & Track the reference motion $\hat{\vc{q}}$ for $T_4$ seconds. \\
+    Track($\hat{\vc{q}}$(t), $T_3$) & Track the reference motion $\hat{\vc{q}}$ for $T_3$ seconds. \\
+    Idle($T_4$) & Idle for $T_4$ seconds.\\
     \hline
   \end{tabular}
   \caption{An example action queue for dressing the upper body of a character with a jacket.}
@@ -45,7 +42,7 @@ reference motion using our primitive action editor. For example, putting
 an arm into a sleeve can be described as first \emph{aligning} the hand
 with the armhole and then \emph{dragging} the cloth up the arm, from the
 wrist to the shoulder. These primitive actions are parameterized
-building blocks for creating various dressing animation.
+building blocks for creating various dressing animations.
 Table~\ref{table:actionQueue} shows a complete action queue for putting on
 a jacket. At each step, our system fetches an action from the
 queue, executes the corresponding dressing controller and simulates the
