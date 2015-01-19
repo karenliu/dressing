@@ -34,14 +34,22 @@
 \end{table}
 
 
-We have designed a system that allows a virtual human character to put
-on various types of garments. Our system consists of three main
-components: primitive action editor, dressing controller and cloth
-simulation. The input to our system includes a piece of garment, a
-character and a reference dressing motion approximating the desired
-dressing style. The reference motion can be a motion captured sequence
-or a sparse set of keyframes. The user first assembles a
-queue of actions to describe the reference motion using our
-primitive action editor. For example, putting an arm into a sleeve can be described as first \emph{aligning} the hand with the armhole and then \emph{dragging} the cloth from the wrist to the shoulder. These primitive actions are parameterizable building blocks for creating various dressing animation. Table~\ref{table:actionQueue} shows a complete action queue for putting on a jacket. At each step, our system fetches an action from the action queue, executes its corresponding dressing controllers and simulates the physics of the cloth. Figure \ref{fig:overview} illustrates the main components of our system. 
+We have designed a system that allows a virtual human character to put on
+various types of garments. Our system consists of three main components:
+the primitive action editor, the dressing controller and the cloth
+simulator. The input to our system includes a garment, a character, and a
+reference dressing motion that approximates the desired dressing style.
+The reference motion can be a motion captured sequence or a sparse set of
+keyframes. The user first assembles a sequence of actions to describe the
+reference motion using our primitive action editor. For example, putting
+an arm into a sleeve can be described as first \emph{aligning} the hand
+with the armhole and then \emph{dragging} the cloth up the arm, from the
+wrist to the shoulder. These primitive actions are parameterized
+building blocks for creating various dressing animation.
+Table~\ref{table:actionQueue} shows a complete action queue for putting on
+a jacket. At each step, our system fetches an action from the
+queue, executes the corresponding dressing controller and simulates the
+physics of the cloth. Figure \ref{fig:overview} illustrates the main
+components of our system. 
 
 
