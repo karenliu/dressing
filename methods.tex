@@ -46,9 +46,17 @@ Our alignment controller first finds an intermediate goal towards the target fea
 \end{algorithm}
 }
 
-We set the intermediate goal as a point on the cloth which is visible from the end effector and it has the smallest geodesic distance to the target feature (Figure \ref{fig:geodesic}). In our implementation, we find this point using rasterization techniques. We assigned the color of vertices on the cloth mesh as their geodesic distances. We place a camera at the end effector and render the cloth mesh into a cubic environmental map. The brightest pixel on the map corresponds the direction to the intermediate goal. Note that we chose to render all six directions of the cubic map, which not only allows the end effector to move forward, but also sideways and backtrack. Our experiments show that the ability to detect the intermediate goal behind the end effector drastically increases the success rate of the alignment.
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=2.6in]{images/geodesic}
+  \caption{Left: The precomputed geodesic distance on the jacket to the left armhole. Brighter red means smaller distance. Right: A cubic map rendering of the geodesic distance when the character aligns his hand with the first sleeve (The first column of Figure~\ref{fig:jacket}).}
+  \label{fig:geodesic}
+\end{figure}
 
-However, the cloth geometry is represented as a single-layer triangular mesh, which means that there is no difference between a point at the outer and the inner surface of the cloth. Since the end effector needs to reach the target feature from inside the cloth, we duplicate the mesh into two layers. These two layers are connected at their boundary. We precompute the geodesic distance on the two-layer cloth mesh using breadth first traversal starting from the feature vertices at the inner layer.
+
+We set the intermediate goal as a point on the cloth which is visible from the end effector and it has the smallest geodesic distance to the target feature. In our implementation, we find this point using rasterization techniques (Figure \ref{fig:geodesic} Right). We assigned the color of vertices on the cloth mesh as their geodesic distances. We place a camera at the end effector and render the cloth mesh into a cubic environmental map. The brightest pixel on the map corresponds the direction to the intermediate goal. Note that we chose to render all six directions of the cubic map, which not only allows the end effector to move forward, but also sideways and backtrack. Our experiments show that the ability to detect the intermediate goal behind the end effector drastically increases the success rate of the alignment.
+
+However, the cloth geometry is represented as a single-layer triangular mesh, which means that there is no difference between a point at the outer and the inner surface of the cloth. Since the end effector needs to reach the target feature from inside the cloth, we duplicate the mesh into two layers. These two layers are connected at their boundary. We precompute the geodesic distance on the two-layer cloth mesh using breadth first propagation starting from the feature vertices at the inner layer (Figure \ref{fig:geodesic} left). Note that the vertices inside the sleeve have large geodesic distances because we restrict the direction of initial distance propagation to the opposite side of the sleeve. Otherwise, the hand could align with the armhole by going through the cuff. 
 
 To move the end effector towards the intermediate goal, we formulated an optimization that computes collision-free inverse kinematics. This IK moves the character's end effectors to the desired locations, keeps the full body motion similar to the reference and guarantees that the body parts do not overlap with each other.
 
