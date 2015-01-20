@@ -17,11 +17,11 @@ cloth does not exert forces on the human.  Certain character motions can
 occasionally cause the cloth to exceed its strain limit, producing
 unrealistic cloth behavior.  This problem could be eliminated using
 feedback forces from the cloth.  A second consequence is that the
-simulated human has no notion of balance, and thus may carry out
-physically impossible motions.  This is especially important in dressing
-tasks such as putting on a pair of pants while standing up.  The lack of
-balance control could also have more subtle effects on the stance of the
-person during upper body dressing.
+kinematically controlled human has no notion of balance, and thus may
+carry out physically impossible motions.  This is especially important in
+dressing tasks such as putting on a pair of pants while standing up.  The
+lack of balance control could also have more subtle effects on the stance
+of the person during upper body dressing.
 
 In all of our examples, the initial configuration of the cloth has been
 set in a way that is favorable to dressing.  If the initial garment were
@@ -34,7 +34,7 @@ the set of actions for a given dressing task.  When given a new garment,
 the system has no way of determining a sequence of actions that will
 successfully place it on a body.  We can imagine a more sophisticated
 system that would analyze an entirely new garment and form a plan of
-actions to properly dress the character.  
+actions to properly dress a character.  
 
 % \karen{Perhaps we can add a paragraph about initial state of
 %   cloth. Currently, we start the simulation with the cloth in
