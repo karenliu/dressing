@@ -130,10 +130,16 @@ We observed that in daily dressing activities, the traversal action can be categ
 
 %\paragraph{Stretching.} \karen{I made some change sin this paragraph. Please verify.}In the second case of traversal, one limb straightens into the cloth tube without assistance from other end effectors. The most frequent failure in this task is that the cloth moves together with the stretching limb, preventing the feature from moving along the limb toward its destination. An effective strategy humans frequently utilize is to use another body part as an anchor to keep the cloth from moving with the stretching limb. We call this body part an \emph{anchor node}. For example, when stretching the right arm into a sleeve as shown in the third column of Figure \ref{fig:jacket}, the anchor node is the left shoulder. Without anchoring the shoulder, the stretching action could fail easily because the IK solver might yield a pose in which the shoulder moves along with the stretching arm, resulting in very little relative movement between the arm and the sleeve. We implemented the anchor node as an additional constraint in the optimization (Equation~\ref{eq:IK}).
 
-\begin{align}
+% \begin{align}
+%   \label{eq:fixtureNode}
+%   \nonumber  \vc{p}(\vc{q})& = \vc{p}^n
+% \end{align}
+
+\begin{equation}
+  \vc{p}(\vc{q}) = \vc{p}^n
   \label{eq:fixtureNode}
-  \nonumber  \vc{p}(\vc{q})& = \vc{p}^n
-\end{align}
+\end{equation}
+
 where $\vc{p}^n$ and $\vc{p(q)}$ are the center of the anchor node at the current and the next time step.
 
 Besides specifying the position of the anchor node, a correct stretching direction is also critical. We use the direction from the center of the anchor node to the current end effector location as the stretching direction. Along this direction, the friction force caused by the stretching limb is canceled by the tension force of the cloth pulling from the anchor node. This prevents the cloth feature from moving with the end effector so that the limb can further pass through the feature. We add an objective term to Equation \ref{eq:IK} to specify the desired stretching direction.
