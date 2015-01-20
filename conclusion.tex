@@ -1,16 +1,19 @@
 \section{Conclusion}
 
-We have presented a system that allows an animator to create motions
-of people that are dressing.  By providing reference motion and an
-action sequence, an animator has a fine degree of control over the
-method and the style that a character uses to put on a garment.  We
-have demonstrated the use of our method in creating a variety of
-dressing animations, including putting on a jacket, a vest, pants
-while sitting, pants while standing, and assistance in putting on a
-robe.  They key technical aspects of our system are collision-free
-inverse kinematics, path planning for limbs, and end effector path
-planning using visibility feedback from the cloth. \karen{Probably
-  want to revise the last sentence according to our recent discussion.}
+We have presented a system that allows an animator to create motions of
+people that are dressing.  By providing reference motion and an action
+sequence, an animator has a fine degree of control over the method and the
+style that a character uses to put on a garment.  We have demonstrated the
+use of our method in creating a variety of dressing animations, including
+putting on a jacket, a vest, pants while sitting, pants while standing,
+and assistance in putting on a robe.  The key to our dressing system is
+path planning: visibility feedback for end effector alignment with cloth
+features, and limb motion planning to avoid body self-collisions.
+
+% They key technical aspects of our system are collision-free
+% inverse kinematics, path planning for limbs, and end effector path
+% planning using visibility feedback from the cloth. \karen{Probably
+% want to revise the last sentence according to our recent discussion.}
 
 There are several avenues for future work on animated dressing.  One
 possibility is to incorporate dexterous manipulation of the cloth with our
