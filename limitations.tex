@@ -11,8 +11,13 @@ dress themselves, much of their knowledge about the cloth state is due
 to tactile feedback, instead of from visual information.
 
 Another limitation of our dressing controller is that it uses kinematic
-motion instead of calculating the dynamics of the human body.  This means
-that the simulated human has no notion of balance, and thus may carry out
+motion instead of calculating the dynamics of the human body.  This has
+two reprecussions.  First, our system is one-way coupled, so that the
+cloth does not exert forces on the human.  Certain character motions can
+occasionally cause the cloth to exceed its strain limit, producing
+unrealistic cloth behavior.  This problem could be eliminated using
+feedback forces from the cloth.  A second consequence is that the
+simulated human has no notion of balance, and thus may carry out
 physically impossible motions.  This is especially important in dressing
 tasks such as putting on a pair of pants while standing up.  The lack of
 balance control could also have more subtle effects on the stance of the
