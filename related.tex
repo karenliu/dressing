@@ -52,10 +52,12 @@ effect of using electric flux for path planning, Wang \etal
 \shortcite{Wang:2013:HPE} showed a virtual human putting on a sock and a
 pair of shorts. In both cases, the clothes are already aligned with the
 body parts and the character simply needs to pull them in the direction
-indicated by the electric flux. Neither of the previous methods attempted
-to control the character based on the state of the cloth. In contrast, our
+indicated by the electric flux. \old{Neither of the previous methods attempted
+to control the character based on the state of the cloth.} \new{While these methods hint at possible
+solutions to the dressing problem based on movement of the character relative to the cloth, they have only been successfully applied to isolated situations and under many assumptions.} In contrast, our
 work designs a feedback controller such that the character can act
-autonomously based on the state of the cloth. \alex{Reviewer 20 claims that this is false. Ho and Komura 2009 shirt example.}
+autonomously based on the state of the cloth \new{and effectively make incremental progress toward the goal in a diverse set of dressing situations}.
+\alex{These methods do use the state of the cloth to make decisions, but rely on assumptions such as easy relative motion of the cloth and body, no snags or occlusions, a clean flux field without singularities, user keyframes in the alignment process, etc.}
 
 % Cloth sim interacting with rigids
 % - Coupling Cloth and Rigid Bodies for Dexterous Manipulation

@@ -1,5 +1,4 @@
 \section{Results}
-\alex{Mention that our motion capture did not include any cloth garments?}
 \begin{table}[b]
   \centering
   \begin{tabular}{|l|c|c|c|c|c|}
@@ -20,8 +19,8 @@
 \end{table}
 
 
-In this section we describe the results of our system. We chose four different types of garments from the Berkeley Garment Library, edited them to meet our needs, and put them on the character using different styles. Please watch the accompanying video for the dressing animations. Our system was implemented in C++. We used DART \cite{Liu:2012:STM} for human character modeling and ARCSim \cite{Narain:2012:AAR} for cloth simulation. We used a denim material profile with 3-4x thickening to simulate layered clothing articles. The examples were run on a desktop workstation with a 4-core 3.7 GHz CPU and 8 GB of memory. The typical running time of a dressing example is several hours to a day. The cloth simulation is the most time-consuming part and takes significantly longer than control. The parameters and performance data of our examples are summarized in Table
- \ref{table:data}. \alex{We solve the optimization with SNOPT, which uses a sequential quadratic program solver.}
+In this section we describe the results of our system. We chose four different types of garments from the Berkeley Garment Library, edited them to meet our needs, and put them on the character using different styles. \new{All motion capture sequences used in the examples were acted out from memory, without real cloth garments.} Please watch the accompanying video for the dressing animations. Our system was implemented in C++. We used DART \cite{Liu:2012:STM} for human character modeling and ARCSim \cite{Narain:2012:AAR} for cloth simulation. We used a denim material profile with 3-4x thickening to simulate layered clothing articles. The examples were run on a desktop workstation with a 4-core 3.7 GHz CPU and 8 GB of memory. The typical running time of a dressing example is several hours to a day. The cloth simulation is the most time-consuming part and takes significantly longer than control. \new{We solve the Inverse Kinematics optimization with SNOPT, which uses a sequential quadratic program solver.} The parameters and performance data of our examples are summarized in Table
+ \ref{table:data}.
 
 
 \paragraph{Jacket.} Figure~\ref{fig:jacket} shows a character putting on a
