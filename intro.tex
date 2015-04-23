@@ -86,11 +86,11 @@ action to the start of the next. Some portions of a dressing sequence do
 not require the character to react to the cloth, and such segments can follow
 the provided keyframe or motion capture data.
 
-\alex{moved the self-intersection comment before the claim of unique problems and smoothed the transition.}
-
 To a large degree, the problem that a dressing animation system must solve
 is a form of \emph{path planning}. \new{The character's body parts must move in coordination to
-complete the task while preventing self-intersection.} However, the dressing problem has a
+complete the task while preventing self-intersection and the
+character must move in and around the cloth in such a way that the garment
+ends up properly on the person.} However, the dressing problem has a
 few unique challenges which are not addressed by standard path planning
 algorithms. \old{First, the character's body parts must move in coordination to
 complete the task while preventing self-intersection. The
