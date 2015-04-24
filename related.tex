@@ -23,12 +23,12 @@ gaiting \cite{Ye:2012:SDH}, or rolling \cite{Bai:2014:DMU}. These methods
 can successfully manipulate rigid bodies with various sizes and masses,
 but it is not clear whether they can be extended to manipulating
 deformable bodies, which typically have more degrees of freedom than rigid
-bodies. In contrast to computer graphics, manipulating deformable bodies
+bodies \new{\cite{Wang:2012:manipulation} }. In contrast to computer graphics, manipulating deformable bodies
 has been addressed extensively in robotics. Researchers have demonstrated
 robots manipulating cloth, ropes, cables, foam rubber, and sheet metal
 \cite{Kosuge:1995:MFO,Wu:1995:AHC,Fahantidis:1997:RHF,Osawa:2007:UML,Cusumano:2011:BCD,Bersch:2011:BRC,Miller:2012:GAR}.
 Our work is related to manipulation of cloth for folding laundry
-\cite{Osawa:2007:UML,Cusumano:2011:BCD,Bersch:2011:BRC,Miller:2012:GAR}.
+\cite{Osawa:2007:UML,Cusumano:2011:BCD,Bersch:2011:BRC,Miller:2012:GAR} \new{and assisted dressing of partially dressed, static mannequins \cite{Tamei:2011:reinforcement}}.
 However, due to the involvement of the human body, developing control
 algorithms for dressing differs substantially from robotic manipulation of
 cloth alone. In this paper, we do not address the problems related to
@@ -56,8 +56,8 @@ indicated by the electric flux. \old{Neither of the previous methods attempted
 to control the character based on the state of the cloth.} \new{While these methods hint at possible
 solutions to the dressing problem based on movement of the character relative to the cloth, they have only been successfully applied to isolated situations and under many assumptions.} In contrast, our
 work designs a feedback controller such that the character can act
-autonomously based on the state of the cloth \new{and effectively make incremental progress toward the goal in a diverse set of dressing situations}.
-\alex{These methods do use the state of the cloth to make decisions, but rely on assumptions such as easy relative motion of the cloth and body, no snags or occlusions, a clean flux field without singularities, user keyframes in the alignment process, etc.}
+autonomously based on the state of the cloth \new{and effectively acheive the goal in a diverse set of dressing situations with relatively few assumptions}.
+
 
 % Cloth sim interacting with rigids
 % - Coupling Cloth and Rigid Bodies for Dexterous Manipulation
@@ -66,13 +66,13 @@ Although cloth simulation is a relatively mature research area, dynamic
 coupling between cloth and rigid body systems still presents many
 challenges. A variety of methods are proposed to handle two-way coupling
 between deformable and rigid bodies
-\cite{Jansson:2003:CDR,Sifakis:2007:HSD,Shinar:2008:TCR,Otaduy:2009:ICH,Miguel:2011:ESC},
+\cite{Jansson:2003:CDR,Sifakis:2007:HSD,Shinar:2008:TCR,Otaduy:2009:ICH,Miguel:2011:ESC,Macklin:2014:unified},
 which can be potentially extended to rigid-cloth coupling. Otaduy et. al.
 \cite{Otaduy:2009:ICH} solved contacts between cloth and rigid bodies by
 implicitly solving a large mixed linear complementarity problem. Bai and
 Liu \cite{Bai:2014:CCR} proposed a simpler coupling method which treats
 existing cloth and rigid body simulators as black boxes without altering
-the internal formulation of collision handling. In our work, we directly
+the internal formulation of collision handling. \new{Most recently, Macklin et. al. proposed a unified dynamic system in which all object interactions are solved as a collection of particle constraints.} In our work, we directly
 use the open source multibody simulator, DART \cite{Liu:2012:STM}, and the
 cloth simulator, ARCSim~\cite{Narain:2012:AAR,Narain:2013:FCA}. ARCSim
 treats the rigid bodies in the scene as objects with infinite mass and
