@@ -12,7 +12,7 @@ to tactile feedback, instead of from visual information.
 
 Another limitation of our dressing controller is that it uses kinematic
 motion instead of calculating the dynamics of the human body.  This has
-two reprecussions.  First, our system is one-way coupled, so that the
+two repercussions.  First, our system is one-way coupled, so that the
 cloth does not exert forces on the human.  Certain character motions can
 occasionally cause the cloth to exceed its strain limit, producing
 unrealistic cloth behavior.  This problem could be eliminated using
@@ -31,12 +31,12 @@ tangled, our dressing actions would most likely fail.  A possible avenue
 for addressing this may be found in the robotics research that has
 investigated picking up and folding cloth~\cite{Cusumano:2011:BCD}.
 
-\new{In our current implementation, actions are excecuted sequentially with the assumption that user input is sufficiently plausible for each action to be completed successfuly. As such, our current system does not automatically respond to failure scenarios. Simmilarly, our system} \old{A final limitation of our system is that it} requires the user to specify
+\new{In our current implementation, actions are executed sequentially with the assumption that user input is sufficiently plausible for each action to be completed successfully. As such, our current system does not automatically respond to failure scenarios. Similarly, our system} \old{A final limitation of our system is that it} requires the user to specify
 the set of actions for a given dressing task. When given a new garment,
 the system has no way of determining a sequence of actions that will
 successfully place it on a body.  We can imagine a more sophisticated
 system that would \new{address both of these limitations by }analyz\old{e}\new{ing} \old{an entirely new} \new{a} garment\new{,} \old{and}form\new{ing} a plan of
-actions to properly dress a character \new{and excecuting this plan with backtracking, re-planning, and other corrective procedures in place to respond to action failures or adjust to environmental perturbation}.  
+actions to properly dress a character \new{and executing this plan with backtracking, re-planning, and other corrective procedures in place to respond to action failures or adjust to environmental perturbation}.  
 
 % \karen{Perhaps we can add a paragraph about initial state of
 %   cloth. Currently, we start the simulation with the cloth in
