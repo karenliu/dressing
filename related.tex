@@ -1,17 +1,12 @@
 \section{Related Work}
 
 Close range interaction with surrounding objects or humans is an important research problem in character animation. This problem is challenging because it often involves potentially conflicting goals: maintaining intentional spatial constraints while avoiding unintentional contacts. Much research has been done on the challenge of handling contact and spatial constraints between body parts or objects \cite{Gleicher:1998:RMN,Liu:2006:CCO,Ho:2009:CMS,Kim:2009:SMM,Ho:2010:SRP}. Ho \etal \shortcite{Ho:2010:SRP} used an ``interaction mesh'' to encode the spatial relationship of interacting body parts. By minimizing the local deformation of the mesh, their method preserved the desired spatial constraints while reducing unintentional contacts or interpenetrations. In additional to the contact problem, close range interaction also demands sophisticated path planning. Previous work exploited inverse kinematics and motion planning techniques to generate motion that satisfies desired manipulation tasks in complex or cluttered environments \cite{Kallmann:2003:PCF,Yamane:2004:SAH}. A large body of robotics literature on the topic of motion planning for full-body manipulation is also highly relevant to the synthesis of close range interaction \cite{Harada:2003:PMH,Takubo:2005:PAO,Yoshida:2005:HMP,Nishiwaki:2006:MCS}. In this paper, dressing is also an example of close range interaction. Unlike most problems studied previously, dressing involves interacting with a unique object, cloth, which is highly deformable with frequent self-collisions. 
-
-
 % Depending on the applications, previous research developed techniques for different subproblems, such as collisions handling \cite{Ye:2012}, spatial constraints solving \cite{Ho:2010:SRP}, and path planning \cite{Kallman:2003,Yamane:2004:SAH,Bai:2012:SCO}. These existing techniques generated interesting animations beyond what simple forward simulation or keyframe interpolation could achieve. However, most methods assumed that the character interacts with humans or objects made of rigid bodies with a few exceptions. Ho and Kumura \shortcite{Ho:2009:CMS} introduced a technique to interact with deformable bodies using topology coordinates, in which the topological relationship of the character's body and the environment can be easily controlled. \shortcite{Jain:2010:SCT} proposed a simple 
-
 % - Spatial Relationship Preserving Character Motion Adaptation
 % Path planning
 % - Synthesis of Concurrent Object Manipulation Tasks
 % - Planning collision-free reaching motions for interactive object manipulation and grasping
 % - Synthesizing animations of human manipulation tasks
-
-
 % Hand manipulation with soft objects
 % - Coupling Cloth and Rigid Bodies for Dexterous Manipulation
 %  Robotic cloth manipulation
@@ -23,12 +18,12 @@ gaiting \cite{Ye:2012:SDH}, or rolling \cite{Bai:2014:DMU}. These methods
 can successfully manipulate rigid bodies with various sizes and masses,
 but it is not clear whether they can be extended to manipulating
 deformable bodies, which typically have more degrees of freedom than rigid
-bodies \new{\cite{Wang:2012:manipulation} }. In contrast to computer graphics, manipulating deformable bodies
+bodies \cite{Wang:2012:manipulation}. In contrast to computer graphics, manipulating deformable bodies
 has been addressed extensively in robotics. Researchers have demonstrated
 robots manipulating cloth, ropes, cables, foam rubber, and sheet metal
 \cite{Kosuge:1995:MFO,Wu:1995:AHC,Fahantidis:1997:RHF,Osawa:2007:UML,Cusumano:2011:BCD,Bersch:2011:BRC,Miller:2012:GAR}.
 Our work is related to manipulation of cloth for folding laundry
-\cite{Osawa:2007:UML,Cusumano:2011:BCD,Bersch:2011:BRC,Miller:2012:GAR} \new{and assisted dressing of partially dressed, static mannequins \cite{Tamei:2011:reinforcement}}.
+\cite{Osawa:2007:UML,Cusumano:2011:BCD,Bersch:2011:BRC,Miller:2012:GAR} and assisted dressing of partially dressed, static mannequins \cite{Tamei:2011:reinforcement}.
 However, due to the involvement of the human body, developing control
 algorithms for dressing differs substantially from robotic manipulation of
 cloth alone. In this paper, we do not address the problems related to
@@ -52,12 +47,10 @@ effect of using electric flux for path planning, Wang \etal
 \shortcite{Wang:2013:HPE} showed a virtual human putting on a sock and a
 pair of shorts. In both cases, the clothes are already aligned with the
 body parts and the character simply needs to pull them in the direction
-indicated by the electric flux. \old{Neither of the previous methods attempted
-to control the character based on the state of the cloth.} \new{While these methods hint at possible
-solutions to the dressing problem based on movement of the character relative to the cloth, they have only been successfully applied to isolated situations and under many assumptions.} In contrast, our
+indicated by the electric flux. While these methods hint at possible
+solutions to the dressing problem based on movement of the character relative to the cloth, they have only been successfully applied to isolated situations and under many assumptions. In contrast, our
 work designs a feedback controller such that the character can act
-autonomously based on the state of the cloth \new{and effectively achieve the goal in a diverse set of dressing situations with relatively few assumptions}.
-
+autonomously based on the state of the cloth and effectively achieve the goal in a diverse set of dressing situations with relatively few assumptions.
 
 % Cloth sim interacting with rigids
 % - Coupling Cloth and Rigid Bodies for Dexterous Manipulation
@@ -72,7 +65,7 @@ which can be potentially extended to rigid-cloth coupling. Otaduy et. al.
 implicitly solving a large mixed linear complementarity problem. Bai and
 Liu \cite{Bai:2014:CCR} proposed a simpler coupling method which treats
 existing cloth and rigid body simulators as black boxes without altering
-the internal formulation of collision handling. \new{Most recently, Macklin et. al. proposed a unified dynamic system in which all object interactions are solved as a collection of particle constraints.} In our work, we directly
+the internal formulation of collision handling. Most recently, Macklin et. al. proposed a unified dynamic system in which all object interactions are solved as a collection of particle constraints. In our work, we directly
 use the open source multibody simulator, DART \cite{Liu:2012:STM}, and the
 cloth simulator, ARCSim~\cite{Narain:2012:AAR,Narain:2013:FCA}. ARCSim
 treats the rigid bodies in the scene as objects with infinite mass and
@@ -82,4 +75,3 @@ massless compared to the human character, ignoring the impact of cloth on
 the character is a reasonable assumption. However, considering accurate
 two-way coupling might be critical for dressing tighter clothing or
 assistive dressing.
-

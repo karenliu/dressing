@@ -23,7 +23,7 @@ dressing tasks such as putting on a pair of pants while standing up.  The
 lack of balance control could also have more subtle effects on the stance
 of the person during upper body dressing.
 
-\new{A subset of human dressing motions involves longterm planning with approximate knowledge of the future state of the garment. This subset includes motions such as re-gripping, navigating the end effector around a moving garment and catching a thrown or dropped garment. Our current algorithm is shortsighted and therefore relies on user input to handle this class of dressing motions. It is reasonable to imagine incorporating approximate cloth simulation to increase planning accuracy in these situations. } 
+A subset of human dressing motions involves long-term planning with approximate knowledge of the future state of the garment. This subset includes motions such as re-gripping, navigating the end effector around a moving garment and catching a thrown or dropped garment. Our current algorithm is shortsighted and therefore relies on user input to handle this class of dressing motions. It is reasonable to imagine incorporating faster, more approximate cloth simulation models to increase planning accuracy in these situations.
 
 In all of our examples, the initial configuration of the cloth has been
 set in a way that is favorable to dressing.  If the initial garment were
@@ -31,12 +31,12 @@ tangled, our dressing actions would most likely fail.  A possible avenue
 for addressing this may be found in the robotics research that has
 investigated picking up and folding cloth~\cite{Cusumano:2011:BCD}.
 
-\new{In our current implementation, actions are executed sequentially with the assumption that user input is sufficiently plausible for each action to be completed successfully. As such, our current system does not automatically respond to failure scenarios. Similarly, our system} \old{A final limitation of our system is that it} requires the user to specify
+In our current implementation, actions are executed sequentially with the assumption that user input is sufficiently plausible for each action to be completed successfully. As such, our current system does not automatically respond to failure scenarios. Similarly, our system requires the user to specify
 the set of actions for a given dressing task. When given a new garment,
 the system has no way of determining a sequence of actions that will
 successfully place it on a body.  We can imagine a more sophisticated
-system that would \new{address both of these limitations by }analyz\old{e}\new{ing} \old{an entirely new} \new{a} garment\new{,} \old{and}form\new{ing} a plan of
-actions to properly dress a character \new{and executing this plan with backtracking, re-planning, and other corrective procedures in place to respond to action failures or adjust to environmental perturbation}.  
+system that would address both of these limitations by analyzing a garment, forming a plan of
+actions to properly dress a character and executing this plan with backtracking, re-planning, and other corrective procedures in place to respond to failures or adjust to environmental perturbation.  
 
 % \karen{Perhaps we can add a paragraph about initial state of
 %   cloth. Currently, we start the simulation with the cloth in

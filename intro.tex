@@ -87,15 +87,12 @@ not require the character to react to the cloth, and such segments can follow
 the provided keyframe or motion capture data.
 
 To a large degree, the problem that a dressing animation system must solve
-is a form of \emph{path planning}. \new{The character's body parts must move in coordination to
+is a form of \emph{path planning}. The character's body parts must move in coordination to
 complete the task while preventing self-intersection and the
 character must move in and around the cloth in such a way that the garment
-ends up properly on the person.} However, the dressing problem has a
+ends up properly on the person. However, the dressing problem has a
 few unique challenges which are not addressed by standard path planning
-algorithms. \old{First, the character's body parts must move in coordination to
-complete the task while preventing self-intersection. The
-character must move in and around the cloth in such a way that the garment
-ends up properly on the person.} Unlike typical path planning that avoids
+algorithms. Unlike typical path planning that avoids
 collisions, contact between the body parts and the cloth is to be
 expected. In fact, \emph{utilizing} contact to expand the opening of a folded
 sleeve or fixate a part of cloth on the body is crucial for
