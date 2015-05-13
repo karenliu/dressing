@@ -106,7 +106,7 @@
 % create a new length ``\ACMcopyrightspace'' and set its initial value.
 
 \newlength{\ACMcopyrightspace}
-\setlength{\ACMcopyrightspace}{3.3in}
+\setlength{\ACMcopyrightspace}{4.3in}
 
 % set the value of ``\ACMcopyrightspace'' based on the kind of document.
 
@@ -115,7 +115,7 @@
 \fi
 
 \if@ACMconference
-\setlength{\ACMcopyrightspace}{1.0in}
+\setlength{\ACMcopyrightspace}{1.5in}
 \fi
 
 \if@ACMreview
